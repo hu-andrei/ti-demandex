@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07090f" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="description" content="Portal interno para abertura de demandas de Tecnologia da Informação." />
+  <title>Portal de Demandas | TI Hungaro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="portal-shell">
+    <section class="portal" aria-label="Seleção de equipe e template de demanda">
+      <div class="portal-heading">
+        <div class="brand-mark" aria-hidden="true">TI</div>
+        <div>
+          <span>PORTAL DE DEMANDAS</span>
+          <p>Selecione uma equipe para visualizar os formulários disponíveis.</p>
+        </div>
+      </div>
+
+      <div id="teams" class="bento-grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
