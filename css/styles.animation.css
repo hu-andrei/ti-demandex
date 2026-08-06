@@ -2,7 +2,7 @@
 
 @keyframes card-enter { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-@keyframes panel-enter { from { opacity: 0; transform: scale(.975); filter: blur(7px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
+@keyframes panel-enter { from { opacity: 0; transform: scale(.99); } to { opacity: 1; transform: scale(1); } }
 
 @keyframes template-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
@@ -61,9 +61,9 @@
 }
 
 
-@keyframes vt-old { to { opacity: 0; transform: scale(.985); filter: blur(4px); } }
+@keyframes vt-old { to { opacity: 0; transform: scale(.995); } }
 
-@keyframes vt-new { from { opacity: 0; transform: scale(1.012); filter: blur(5px); } }
+@keyframes vt-new { from { opacity: 0; transform: scale(1.005); } }
 
 
 @keyframes emoji-float {
