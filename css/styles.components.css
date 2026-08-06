@@ -236,7 +236,7 @@
 @keyframes template-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes fade-slide { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* Desktop: toda a interface permanece dentro de uma Ãºnica Ã¡rea Ãºtil. */
+/* Desktop: toda a interface permanece dentro de uma única área útil. */
 @media (min-width: 901px) {
   html, body { height: 100%; overflow: hidden; }
   .portal-shell { height: 100dvh; min-height: 0; padding-block: clamp(12px, 3.2vh, 46px); }
@@ -249,7 +249,7 @@
   .team-card.is-open .template-grid { height: 100%; grid-auto-rows: minmax(0, 1fr); align-content: stretch; }
 }
 
-/* Telas desktop mais baixas recebem uma versÃ£o ainda mais compacta. */
+/* Telas desktop mais baixas recebem uma versão ainda mais compacta. */
 @media (min-width: 901px) and (max-height: 760px) {
   .portal-heading { margin-bottom: 10px; }
   .brand-mark { width: 36px; height: 36px; }
@@ -283,7 +283,7 @@
 }
 
 
-/* OtimizaÃ§Ã£o das superfÃ­cies que realmente passam por transformaÃ§Ã£o. */
+/* Otimização das superfícies que realmente passam por transformação. */
 .ambient,
 .team-card,
 .team-card::after,
@@ -302,7 +302,7 @@
   will-change: transform, opacity, filter;
 }
 
-/* MicroanimaÃ§Ãµes exclusivas de cada equipe. */
+/* Microanimações exclusivas de cada equipe. */
 .team-icon {
   transform: translateZ(0);
   transition: transform .35s var(--ease-out),
@@ -332,7 +332,7 @@
   animation: support-grip 3.2s ease-in-out infinite;
 }
 
-/* BI: barras crescem e a linha faz uma leitura contÃ­nua. */
+/* BI: barras crescem e a linha faz uma leitura contínua. */
 .team-icon--bi svg path:first-child {
   transform-origin: 50% 100%;
   animation: bi-bars 2.7s var(--ease-out) infinite;
@@ -374,8 +374,8 @@
   will-change: transform, opacity;
 }
 
-/* O hover nÃ£o altera `animation`, `animation-duration` ou `animation-delay`.
-   Assim, as animaÃ§Ãµes internas continuam do ponto atual sem reiniciar. */
+/* O hover não altera `animation`, `animation-duration` ou `animation-delay`.
+   Assim, as animações internas continuam do ponto atual sem reiniciar. */
 
 @keyframes support-tool {
   0%, 68%, 100% { transform: rotate(0deg) translateZ(0); }
@@ -424,7 +424,7 @@
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
 
-/* TransiÃ§Ã£o nativa entre o grid e o submenu, quando suportada. */
+/* Transição nativa entre o grid e o submenu, quando suportada. */
 ::view-transition-old(root) { animation: .22s ease both vt-old; }
 ::view-transition-new(root) { animation: .48s var(--ease-out) both vt-new; }
 @keyframes vt-old { to { opacity: 0; transform: scale(.985); filter: blur(4px); } }
@@ -560,10 +560,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   TransiÃ§Ã£o estÃ¡vel entre o bento grid e o submenu
+   Transição estável entre o bento grid e o submenu
    -------------------------------------------------------------------------- */
 
-/* A troca de estado nÃ£o recria o DOM e nÃ£o utiliza snapshots da pÃ¡gina. */
+/* A troca de estado não recria o DOM e não utiliza snapshots da página. */
 .bento-grid {
   position: relative;
   contain: layout paint;
@@ -583,12 +583,12 @@
     box-shadow .3s ease;
 }
 
-/* Remove a segunda animaÃ§Ã£o de entrada que causava o frame duplicado. */
+/* Remove a segunda animação de entrada que causava o frame duplicado. */
 .team-card.is-open {
   animation: none;
 }
 
-/* Os cards nÃ£o selecionados saem suavemente antes de serem ignorados. */
+/* Os cards não selecionados saem suavemente antes de serem ignorados. */
 .bento-grid.has-open .team-card.is-inactive {
   display: block;
   position: absolute;
@@ -659,15 +659,15 @@
   }
 }
 
-/* Desativa a transiÃ§Ã£o por snapshot antiga, responsÃ¡vel pelo flick. */
+/* Desativa a transição por snapshot antiga, responsável pelo flick. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
 }
 
 /*
- * Os cards inativos nÃ£o devem participar do frame intermediÃ¡rio.
- * Antes, `visibility` tinha atraso de 320 ms; nesse intervalo o card jÃ¡ estava
+ * Os cards inativos não devem participar do frame intermediário.
+ * Antes, `visibility` tinha atraso de 320 ms; nesse intervalo o card já estava
  * com `position: absolute` e `inset: 0`, por isso aparecia ocupando todo o painel.
  */
 .bento-grid.has-open .team-card.is-inactive {
@@ -680,19 +680,19 @@
   transition: none;
 }
 
-/* MantÃ©m somente o card selecionado na composiÃ§Ã£o durante a transiÃ§Ã£o. */
+/* Mantém somente o card selecionado na composição durante a transição. */
 .bento-grid.has-open .team-card.is-open {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
 }
 
-/* Evita que o conteÃºdo resumido ocupe a altura inteira antes do painel abrir. */
+/* Evita que o conteúdo resumido ocupe a altura inteira antes do painel abrir. */
 .team-card.is-open .team-toggle {
   height: auto;
   flex: 0 0 auto;
 }
 
-/* O painel Ã© composto desde o primeiro frame, mas comeÃ§a transparente. */
+/* O painel é composto desde o primeiro frame, mas começa transparente. */
 .team-card.is-open .team-panel-inner {
   opacity: 1;
 }
