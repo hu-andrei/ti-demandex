@@ -1,28 +1,6 @@
-:root {
-  color-scheme: dark;
-  --bg: #07090f;
-  --line: rgba(255, 255, 255, .09);
-  --line-strong: rgba(255, 255, 255, .16);
-  --text: #f7f8fc;
-  --muted: #929bad;
-  --radius-xl: clamp(18px, 2.1vmin, 30px);
-  --radius-md: clamp(12px, 1.25vmin, 16px);
-  --ease-out: cubic-bezier(.16, 1, .3, 1);
-}
+﻿/* Layout, componentes, responsividade e estados. */
 
-* { box-sizing: border-box; }
-html, body { width: 100%; min-height: 100%; }
-html { background: var(--bg); }
-body {
-  margin: 0;
-  color: var(--text);
-  background: var(--bg);
-  font-family: 'DM Sans', sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-button { font: inherit; }
-a { color: inherit; }
-
+/* Componentes, layout responsivo e estados interativos do portal. */
 .ambient {
   position: fixed;
   z-index: -3;
@@ -81,6 +59,7 @@ a { color: inherit; }
   color: var(--muted);
   font-size: clamp(10px, 1.25vh, 13px);
 }
+.portal-heading > div:last-child { flex: 1 1 auto; min-width: 0; }
 
 .bento-grid {
   display: grid;
@@ -115,7 +94,6 @@ a { color: inherit; }
   opacity: .08;
 }
 .team-card:hover {
-  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--team-color) 40%, var(--line));
 }
 .team-card.is-open {
@@ -191,12 +169,36 @@ a { color: inherit; }
 .team-card:hover .team-action i { transform: translateX(3px); background: rgba(255,255,255,.05); }
 
 .team-card.is-open .team-toggle { height: auto; min-height: 0; padding-bottom: clamp(12px, 1.5vh, 20px); }
-.team-card.is-open .team-copy { margin-top: clamp(10px, 1.8vh, 20px); padding-top: 0; }
+.team-card.is-open .team-toggle { cursor: default; }
+.team-card.is-open .team-copy {
+  width: 100%;
+  margin-top: clamp(10px, 1.8vh, 20px);
+  padding-top: 0;
+  padding-bottom: clamp(12px, 1.6vh, 18px);
+  border-bottom: 1px solid color-mix(in srgb, var(--team-color) 32%, var(--line));
+}
 .team-card.is-open .team-copy h2 { font-size: clamp(22px, 2.8vmin, 38px); }
 .team-card.is-open .team-action { display: none; }
 .close-label { display: none; align-items: center; gap: 8px; color: var(--muted); font-size: clamp(9px, 1.05vh, 11px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .team-card.is-open .close-label { display: flex; animation: fade-slide .4s .15s var(--ease-out) both; }
 .close-label span { width: clamp(27px, 3vh, 31px); height: clamp(27px, 3vh, 31px); display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: #fff; font-size: 18px; }
+.close-label {
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color .25s ease, transform .25s var(--ease-out);
+}
+.close-label span {
+  transition: color .25s ease, background-color .25s ease, border-color .25s ease, transform .25s var(--ease-out);
+}
+.team-card.is-open .close-label:hover {
+  color: #fff;
+  transform: translateX(-2px);
+}
+.team-card.is-open .close-label:hover span {
+  border-color: color-mix(in srgb, var(--team-color) 65%, #fff);
+  background: color-mix(in srgb, var(--team-color) 20%, transparent);
+  transform: rotate(-8deg) scale(1.06);
+}
 
 .team-panel { display: grid; grid-template-rows: 0fr; opacity: 0; }
 .team-card.is-open .team-panel { grid-template-rows: 1fr; opacity: 1; }
@@ -234,7 +236,7 @@ a { color: inherit; }
 @keyframes template-enter { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes fade-slide { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* Desktop: toda a interface permanece dentro de uma única área útil. */
+/* Desktop: toda a interface permanece dentro de uma Ãºnica Ã¡rea Ãºtil. */
 @media (min-width: 901px) {
   html, body { height: 100%; overflow: hidden; }
   .portal-shell { height: 100dvh; min-height: 0; padding-block: clamp(12px, 3.2vh, 46px); }
@@ -247,7 +249,7 @@ a { color: inherit; }
   .team-card.is-open .template-grid { height: 100%; grid-auto-rows: minmax(0, 1fr); align-content: stretch; }
 }
 
-/* Telas desktop mais baixas recebem uma versão ainda mais compacta. */
+/* Telas desktop mais baixas recebem uma versÃ£o ainda mais compacta. */
 @media (min-width: 901px) and (max-height: 760px) {
   .portal-heading { margin-bottom: 10px; }
   .brand-mark { width: 36px; height: 36px; }
@@ -281,7 +283,7 @@ a { color: inherit; }
 }
 
 
-/* Otimização das superfícies que realmente passam por transformação. */
+/* OtimizaÃ§Ã£o das superfÃ­cies que realmente passam por transformaÃ§Ã£o. */
 .ambient,
 .team-card,
 .team-card::after,
@@ -300,7 +302,7 @@ a { color: inherit; }
   will-change: transform, opacity, filter;
 }
 
-/* Microanimações exclusivas de cada equipe. */
+/* MicroanimaÃ§Ãµes exclusivas de cada equipe. */
 .team-icon {
   transform: translateZ(0);
   transition: transform .35s var(--ease-out),
@@ -310,11 +312,10 @@ a { color: inherit; }
 }
 
 .team-card:hover .team-icon {
-  transform: translateY(-2px) scale(1.045) translateZ(0);
-  border-color: color-mix(in srgb, var(--team-color) 58%, transparent);
-  background: color-mix(in srgb, var(--team-color) 14%, transparent);
-  box-shadow: inset 0 1px rgba(255,255,255,.08),
-              0 18px 42px color-mix(in srgb, var(--team-color) 16%, transparent);
+  transform: translateZ(0);
+  border-color: color-mix(in srgb, var(--team-color) 35%, transparent);
+  background: color-mix(in srgb, var(--team-color) 9%, transparent);
+  box-shadow: inset 0 1px rgba(255,255,255,.06), 0 16px 35px rgba(0,0,0,.18);
 }
 
 .team-icon svg {
@@ -331,7 +332,7 @@ a { color: inherit; }
   animation: support-grip 3.2s ease-in-out infinite;
 }
 
-/* BI: barras crescem e a linha faz uma leitura contínua. */
+/* BI: barras crescem e a linha faz uma leitura contÃ­nua. */
 .team-icon--bi svg path:first-child {
   transform-origin: 50% 100%;
   animation: bi-bars 2.7s var(--ease-out) infinite;
@@ -373,8 +374,8 @@ a { color: inherit; }
   will-change: transform, opacity;
 }
 
-/* O hover não altera `animation`, `animation-duration` ou `animation-delay`.
-   Assim, as animações internas continuam do ponto atual sem reiniciar. */
+/* O hover nÃ£o altera `animation`, `animation-duration` ou `animation-delay`.
+   Assim, as animaÃ§Ãµes internas continuam do ponto atual sem reiniciar. */
 
 @keyframes support-tool {
   0%, 68%, 100% { transform: rotate(0deg) translateZ(0); }
@@ -423,7 +424,7 @@ a { color: inherit; }
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
 
-/* Transição nativa entre o grid e o submenu, quando suportada. */
+/* TransiÃ§Ã£o nativa entre o grid e o submenu, quando suportada. */
 ::view-transition-old(root) { animation: .22s ease both vt-old; }
 ::view-transition-new(root) { animation: .48s var(--ease-out) both vt-new; }
 @keyframes vt-old { to { opacity: 0; transform: scale(.985); filter: blur(4px); } }
@@ -472,9 +473,9 @@ a { color: inherit; }
 }
 
 .team-card:hover .template-count {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--team-color) 55%, transparent);
-  background: color-mix(in srgb, var(--team-color) 13%, rgba(8, 11, 18, .78));
+  transform: none;
+  border-color: color-mix(in srgb, var(--team-color) 30%, var(--line));
+  background: color-mix(in srgb, var(--team-color) 8%, rgba(8, 11, 18, .72));
 }
 
 .team-card:hover .team-emoji {
@@ -493,6 +494,17 @@ a { color: inherit; }
 .team-card.is-open .template-count {
   margin-left: auto;
   margin-right: clamp(118px, 10vw, 170px);
+}
+
+/* No submenu, o contador fica alinhado entre o ícone e a ação de retorno. */
+.team-card.is-open .team-topline {
+  align-items: center;
+}
+.team-card.is-open .team-card__template-count,
+.team-card.is-open .template-count {
+  margin-left: auto;
+  margin-right: clamp(16px, 2vw, 28px);
+  align-self: center;
 }
 
 @keyframes emoji-float {
@@ -530,15 +542,28 @@ a { color: inherit; }
   }
 }
 
+@media (max-width: 900px) {
+  .team-card.is-open .template-count {
+    margin-left: auto;
+    margin-right: clamp(12px, 2vw, 24px);
+  }
+}
+
+@media (max-width: 620px) {
+  .team-card.is-open .template-count {
+    margin-right: 12px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .team-emoji { animation: none; }
 }
 
 /* --------------------------------------------------------------------------
-   Transição estável entre o bento grid e o submenu
+   TransiÃ§Ã£o estÃ¡vel entre o bento grid e o submenu
    -------------------------------------------------------------------------- */
 
-/* A troca de estado não recria o DOM e não utiliza snapshots da página. */
+/* A troca de estado nÃ£o recria o DOM e nÃ£o utiliza snapshots da pÃ¡gina. */
 .bento-grid {
   position: relative;
   contain: layout paint;
@@ -558,12 +583,12 @@ a { color: inherit; }
     box-shadow .3s ease;
 }
 
-/* Remove a segunda animação de entrada que causava o frame duplicado. */
+/* Remove a segunda animaÃ§Ã£o de entrada que causava o frame duplicado. */
 .team-card.is-open {
   animation: none;
 }
 
-/* Os cards não selecionados saem suavemente antes de serem ignorados. */
+/* Os cards nÃ£o selecionados saem suavemente antes de serem ignorados. */
 .bento-grid.has-open .team-card.is-inactive {
   display: block;
   position: absolute;
@@ -634,19 +659,15 @@ a { color: inherit; }
   }
 }
 
-/* Desativa a transição por snapshot antiga, responsável pelo flick. */
+/* Desativa a transiÃ§Ã£o por snapshot antiga, responsÃ¡vel pelo flick. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
 }
 
-/* --------------------------------------------------------------------------
-   Correção do card fantasma durante a abertura do submenu
-   -------------------------------------------------------------------------- */
-
 /*
- * Os cards inativos não devem participar do frame intermediário.
- * Antes, `visibility` tinha atraso de 320 ms; nesse intervalo o card já estava
+ * Os cards inativos nÃ£o devem participar do frame intermediÃ¡rio.
+ * Antes, `visibility` tinha atraso de 320 ms; nesse intervalo o card jÃ¡ estava
  * com `position: absolute` e `inset: 0`, por isso aparecia ocupando todo o painel.
  */
 .bento-grid.has-open .team-card.is-inactive {
@@ -659,25 +680,25 @@ a { color: inherit; }
   transition: none;
 }
 
-/* Mantém somente o card selecionado na composição durante a transição. */
+/* MantÃ©m somente o card selecionado na composiÃ§Ã£o durante a transiÃ§Ã£o. */
 .bento-grid.has-open .team-card.is-open {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
 }
 
-/* Evita que o conteúdo resumido ocupe a altura inteira antes do painel abrir. */
+/* Evita que o conteÃºdo resumido ocupe a altura inteira antes do painel abrir. */
 .team-card.is-open .team-toggle {
   height: auto;
   flex: 0 0 auto;
 }
 
-/* O painel é composto desde o primeiro frame, mas começa transparente. */
+/* O painel Ã© composto desde o primeiro frame, mas comeÃ§a transparente. */
 .team-card.is-open .team-panel-inner {
   opacity: 1;
 }
 
 /* ==========================================================
-   SUBMENU COMPACTO — evita cards gigantes e melhora a leitura
+   SUBMENU COMPACTO â€” evita cards gigantes e melhora a leitura
    ========================================================== */
 .team-card.is-open .team-panel-inner {
   display: flex;
@@ -774,3 +795,4 @@ a { color: inherit; }
     max-height: none;
   }
 }
+

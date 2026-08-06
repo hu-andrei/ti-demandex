@@ -1,0 +1,5 @@
+/* Arquivo principal de estilos: carregue este arquivo no HTML. */
+@import url('./style.tokens.css');
+@import url('./styles.base.css');
+@import url('./styles.components.css');
+@import url('./styles.animation.css');

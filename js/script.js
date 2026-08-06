@@ -1,3 +1,4 @@
+// Portal de demandas: dados e interações da interface.
 const ISSUE_BASE = 'https://github.com/ti-hu-org/ti-demandas/issues/new?template=';
 
 const icons = {
