@@ -50,6 +50,129 @@ let activeAnimations = [];
 let ambientAnimations = [];
 
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const viewSwitcher = document.querySelector('.view-switcher');
+const VIEW_STORAGE_KEY = 'ti-demandas-view';
+const THEME_STORAGE_KEY = 'ti-demandas-theme';
+const themeToggle = document.querySelector('.theme-toggle');
+const portalHeading = document.querySelector('.portal-heading');
+const portalHeadingIcon = document.querySelector('.portal-heading__icon');
+const portalHeadingTitle = document.querySelector('.portal-heading__title');
+const portalHeadingDescription = document.querySelector('.portal-heading__description');
+const portalHeadingBack = document.querySelector('.portal-heading__back');
+const defaultPortalHeading = {
+  title: portalHeadingTitle?.textContent || 'PORTAL DE DEMANDAS',
+  description: portalHeadingDescription?.textContent || ''
+};
+let headerTransitionFrame = null;
+let headerAnimations = [];
+let themeAnimation = null;
+
+function updatePortalHeading(team, animateChange = false) {
+  const title = team?.name.toUpperCase() || defaultPortalHeading.title;
+  const description = team?.description || defaultPortalHeading.description;
+
+  const commit = () => {
+    if (portalHeadingTitle) portalHeadingTitle.textContent = title;
+    if (portalHeadingDescription) portalHeadingDescription.textContent = description;
+    if (portalHeadingIcon) {
+      portalHeadingIcon.innerHTML = team?.icon || 'TI';
+      portalHeadingIcon.style.setProperty('--team-color', team?.color || '#cbd8fa');
+      portalHeadingIcon.querySelector('svg')?.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    }
+  };
+
+  if (!animateChange || motion.matches) {
+    commit();
+    return;
+  }
+
+  headerAnimations.forEach(animation => animation.cancel());
+  headerAnimations = [];
+  if (headerTransitionFrame) cancelAnimationFrame(headerTransitionFrame);
+  const parts = [portalHeadingIcon, portalHeadingTitle, portalHeadingDescription].filter(Boolean);
+  const exitAnimations = parts.map(element => element.animate([
+    { opacity: 1, transform: 'translateY(0)' },
+    { opacity: 0, transform: 'translateY(5px)' }
+  ], { duration: 150, easing: 'ease-in', fill: 'both' }));
+  headerAnimations.push(...exitAnimations);
+
+  Promise.all(exitAnimations.map(animation => animation.finished)).then(() => {
+    commit();
+    const enterAnimations = parts.map(element => element.animate([
+      { opacity: 0, transform: 'translateY(-5px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: 360, delay: 20, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' }));
+    headerAnimations = enterAnimations;
+  }).catch(() => {
+    // Uma nova abertura pode cancelar a animação anterior sem gerar erro.
+  });
+}
+
+function setTheme(theme, animateChange = false) {
+  const light = theme === 'light';
+  const commit = () => {
+    document.documentElement.dataset.theme = light ? 'light' : 'dark';
+    themeToggle?.setAttribute('aria-pressed', String(light));
+    themeToggle?.setAttribute('aria-label', light ? 'Ativar modo escuro' : 'Ativar modo claro');
+    themeToggle?.setAttribute('title', light ? 'Ativar modo escuro' : 'Ativar modo claro');
+  };
+
+  if (!animateChange || motion.matches) {
+    commit();
+    return;
+  }
+
+  themeAnimation?.cancel();
+  document.documentElement.classList.add('is-theme-transitioning');
+  themeAnimation = document.documentElement.animate([
+    { opacity: 1 },
+    { opacity: 0, offset: .5 },
+    { opacity: 1 }
+  ], { duration: 360, easing: 'ease-in-out', fill: 'both' });
+  setTimeout(commit, 180);
+  themeAnimation.finished.then(() => {
+    document.documentElement.classList.remove('is-theme-transitioning');
+  }, () => {
+    document.documentElement.classList.remove('is-theme-transitioning');
+  });
+}
+
+function setView(view) {
+  const isList = view === 'list';
+  const alreadyActive = root.classList.contains('is-list-view') === isList;
+  if (alreadyActive || root.classList.contains('is-view-transitioning')) return;
+  localStorage.setItem(VIEW_STORAGE_KEY, view);
+
+  const commitView = () => {
+    root.classList.toggle('is-list-view', isList);
+    viewSwitcher?.querySelectorAll('[data-view]').forEach(button => {
+      const active = button.dataset.view === view;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    requestAnimationFrame(() => {
+      animate(root,
+        [
+          { opacity: 0, transform: 'translateY(7px) scale(.992)' },
+          { opacity: 1, transform: 'translateY(0) scale(1)' }
+        ],
+        { duration: 360, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+      root.classList.remove('is-view-transitioning');
+    });
+  };
+
+  root.classList.add('is-view-transitioning');
+  cancelAnimations();
+  const exit = animate(root,
+    [
+      { opacity: 1, transform: 'translateY(0) scale(1)' },
+      { opacity: 0, transform: 'translateY(-5px) scale(.994)' }
+    ],
+    { duration: 150, easing: 'ease-in' });
+  if (exit) exit.finished.then(commitView);
+  else commitView();
+}
 
 function cancelAnimations() {
   activeAnimations.forEach(animation => animation.cancel());
@@ -86,6 +209,13 @@ function animateDecorations() {
   root.querySelectorAll('.team-icon--rpa svg').forEach(el => animateLoop(el, keyframes.rpaFloat, { duration: 3000, easing: 'ease-in-out' }));
   root.querySelectorAll('.team-icon--rpa svg path:nth-child(2)').forEach(el => animateLoop(el, keyframes.rpaFace, { duration: 3000, easing: 'steps(1, end)' }));
   root.querySelectorAll('.team-emoji').forEach(el => animateLoop(el, keyframes.emoji, { duration: 5200, easing: 'ease-in-out' }));
+  const portalIcon = document.querySelector('.portal-heading__icon svg');
+  if (portalIcon) animateLoop(portalIcon, [
+    { transform: 'translateY(0) rotate(0deg) scale(1)' },
+    { offset: .45, transform: 'translateY(-1px) rotate(-3deg) scale(1.06)' },
+    { offset: .58, transform: 'translateY(-1px) rotate(3deg) scale(1.06)' },
+    { transform: 'translateY(0) rotate(0deg) scale(1)' }
+  ], { duration: 3000, easing: 'ease-in-out' });
 }
 
 function animate(element, keyframes, options) {
@@ -113,6 +243,11 @@ function templateMarkup(template, index, color) {
     </a>`;
 }
 
+function popularMarkup(team) {
+  const popular = team.templates.slice(0, team.id === 'suporte' ? 2 : 1);
+  return `<div class="popular-demands" aria-label="Demandas mais utilizadas"><span class="popular-demands__label">Mais utilizadas</span><div class="popular-demands__items">${popular.map(([title]) => `<span class="popular-demand">${title}</span>`).join('')}</div></div>`;
+}
+
 function mountPortal() {
   root.innerHTML = teams.map((team, cardIndex) => `
     <article class="team-card" data-team="${team.id}" style="--team-color:${team.color};--card-order:${cardIndex}">
@@ -121,12 +256,12 @@ function mountPortal() {
           <span class="team-icon team-icon--${team.id}">${team.icon}</span>
           <span class="template-count">${team.templates.length} ${team.templates.length === 1 ? 'template disponível' : 'templates disponíveis'}</span>
           <span class="team-emoji" aria-hidden="true">${team.emoji}</span>
-          <span class="close-label"><span>×</span> Voltar às equipes</span>
         </span>
         <span class="team-copy">
           <h2>${team.name}</h2>
           <p>${team.description}</p>
         </span>
+        ${popularMarkup(team)}
         <span class="team-action">Selecionar equipe <i aria-hidden="true">→</i></span>
       </button>
       <div id="panel-${team.id}" class="team-panel" aria-hidden="true">
@@ -145,7 +280,20 @@ function mountPortal() {
 
 function applyState() {
   const hasOpenTeam = Boolean(openTeam);
+  const selectedTeam = teams.find(team => team.id === openTeam);
+  const wasTeamHeading = portalHeading?.classList.contains('is-team-heading');
   root.classList.toggle('has-open', hasOpenTeam);
+  portalHeading?.classList.toggle('is-team-heading', hasOpenTeam);
+  portalHeading?.style.setProperty('--team-color', selectedTeam?.color || '#cbd8fa');
+  if (themeToggle) {
+    themeToggle.hidden = hasOpenTeam;
+    themeToggle.disabled = hasOpenTeam;
+  }
+  if (portalHeadingBack) {
+    portalHeadingBack.hidden = !hasOpenTeam;
+    portalHeadingBack.disabled = !hasOpenTeam;
+  }
+  updatePortalHeading(selectedTeam, hasOpenTeam || wasTeamHeading);
 
   root.querySelectorAll('.team-card').forEach(card => {
     const isOpen = card.dataset.team === openTeam;
@@ -174,7 +322,7 @@ function toggleTeam(id) {
   // Faz a troca de layout enquanto o grid está invisível. Isso elimina o
   // frame intermediário em que os cards voltam a ocupar posições antigas.
   const exit = animate(root,
-    [{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.985)' }],
+    [{ opacity: 1 }, { opacity: 0 }],
     { duration: 150, easing: 'ease-in' });
 
   const commit = () => {
@@ -182,13 +330,13 @@ function toggleTeam(id) {
     applyState();
     requestAnimationFrame(() => {
       animate(root,
-        [{ opacity: 0, transform: 'scale(1.01)' }, { opacity: 1, transform: 'scale(1)' }],
+        [{ opacity: 0 }, { opacity: 1 }],
         { duration: 420, easing: 'cubic-bezier(.16, 1, .3, 1)' });
       if (nextTeam) {
         const panel = root.querySelector(`[data-team="${nextTeam}"] .team-panel`);
         panel.querySelectorAll('.template-card').forEach((card, index) => {
           animate(card,
-            [{ opacity: 0, transform: 'translateY(10px) scale(.985)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }],
+            [{ opacity: 0 }, { opacity: 1 }],
             { duration: 460, delay: 90 + index * 42, easing: 'cubic-bezier(.16, 1, .3, 1)' });
         });
       }
@@ -202,12 +350,27 @@ function toggleTeam(id) {
 
 mountPortal();
 applyState();
-animateDecorations();
-
-// Entrada inicial e revelação dos templates são controladas pela Web
-// Animations API, evitando reinícios causados por mudanças de classe CSS.
-root.querySelectorAll('.team-card').forEach((card, index) => {
-  animate(card,
-    [{ opacity: 0, transform: 'translateY(18px) scale(.985)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }],
-    { duration: 550, delay: index * 55, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+portalHeadingBack?.addEventListener('click', () => {
+  if (openTeam) toggleTeam(openTeam);
 });
+animateDecorations();
+setTheme(localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark');
+themeToggle?.addEventListener('click', () => {
+  const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  setTheme(nextTheme, true);
+});
+const savedView = localStorage.getItem(VIEW_STORAGE_KEY);
+if (savedView === 'list') {
+  root.classList.add('is-list-view');
+  viewSwitcher?.querySelector('[data-view="grid"]')?.classList.remove('is-active');
+  viewSwitcher?.querySelector('[data-view="grid"]')?.setAttribute('aria-pressed', 'false');
+  viewSwitcher?.querySelector('[data-view="list"]')?.classList.add('is-active');
+  viewSwitcher?.querySelector('[data-view="list"]')?.setAttribute('aria-pressed', 'true');
+}
+viewSwitcher?.querySelectorAll('[data-view]').forEach(button => {
+  button.addEventListener('click', () => setView(button.dataset.view));
+});
+
+// Só libera a interface depois que a tipografia final estiver disponível.
+// O limite evita manter a página oculta caso o provedor de fontes esteja indisponível.

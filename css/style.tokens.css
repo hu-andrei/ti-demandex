@@ -1,10 +1,4 @@
 ﻿:root {
-color-scheme: dark;
-  --bg: #07090f;
-  --line: rgba(255, 255, 255, .09);
-  --line-strong: rgba(255, 255, 255, .16);
-  --text: #f7f8fc;
-  --muted: #929bad;
   --radius-xl: clamp(18px, 2.1vmin, 30px);
   --radius-md: clamp(12px, 1.25vmin, 16px);
   --ease-out: cubic-bezier(.16, 1, .3, 1);

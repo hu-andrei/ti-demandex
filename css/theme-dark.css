@@ -1,0 +1,19 @@
+/* Tema escuro do Portal de Demandas. */
+:root {
+  color-scheme: dark;
+  --bg: #07090f;
+  --line: rgba(255, 255, 255, .09);
+  --line-strong: rgba(255, 255, 255, .16);
+  --text: #f7f8fc;
+  --muted: #929bad;
+  --color-brand: #cbd8fa; --color-heading: #cbd5ed; --color-active: #e8edff;
+  --color-soft: #b8c0d2; --color-action: #c8cfdb; --color-arrow: #dfe5f2; --color-white: #fff;
+  --surface-soft: rgba(255,255,255,.025); --surface-hover: rgba(255,255,255,.06);
+  --ambient-a: rgba(63,114,255,.22); --ambient-b: rgba(126,78,255,.16);
+  --card-background: linear-gradient(145deg, rgba(19,23,35,.9), rgba(10,13,21,.82));
+  --card-open-background: linear-gradient(145deg, rgba(22,27,41,.98), rgba(11,14,23,.96));
+  --shadow-card: 0 22px 70px rgba(0,0,0,.22); --shadow-icon: 0 16px 35px rgba(0,0,0,.18);
+  --shadow-brand: 0 10px 26px rgba(0,0,0,.14); --text-inverse: #fff;
+  --border-highlight: rgba(255,255,255,.06); --surface-strong: rgba(255,255,255,.07);
+  --surface-card: rgba(255,255,255,.025); --surface-card-hover: rgba(255,255,255,.05);
+}

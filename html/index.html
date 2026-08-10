@@ -9,10 +9,26 @@
   <title>Portal de Demandas | TI Hungaro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=block" rel="stylesheet" />
+  <style id="remove-first-load-flicker">
+    /* Impede o primeiro frame com a fonte de reserva antes das fontes da interface. */
+    html.fonts-loading body { visibility: hidden; }
+    html.fonts-loading .portal-shell { opacity: 0; }
+    /* Os cards não podem iniciar enquanto a interface ainda está oculta. */
+    html.fonts-loading .team-card,
+    html.fonts-ready .team-card {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0) scale(.985);
+      animation: none !important;
+    }
+    html.fonts-ready .portal-shell { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      html.fonts-ready .team-card { opacity: 1; animation: none; }
+    }
+  </style>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>  
+<body>
   <div class="ambient ambient-a" aria-hidden="true"></div>
   <div class="ambient ambient-b" aria-hidden="true"></div>
   <div class="noise" aria-hidden="true"></div>
@@ -20,11 +36,26 @@
   <main class="portal-shell">
     <section class="portal" aria-label="Seleção de equipe e template de demanda">
       <div class="portal-heading">
-        <div class="brand-mark" aria-hidden="true">TI</div>
+        <div class="brand-mark portal-heading__icon" aria-hidden="true">TI</div>
         <div>
-          <span>PORTAL DE DEMANDAS</span>
-          <p>Selecione uma equipe para visualizar os formulários disponíveis.</p>
+          <span class="portal-heading__title">PORTAL DE DEMANDAS</span>
+          <p class="portal-heading__description">Selecione uma equipe para visualizar os formulários disponíveis.</p>
         </div>
+        <button class="portal-heading__back" type="button" aria-label="Voltar às equipes" hidden>
+          <span aria-hidden="true">←</span> Voltar às equipes
+        </button>
+        <div class="view-switcher" role="group" aria-label="Formato de apresentação">
+          <button class="view-switcher__button is-active" type="button" data-view="grid" aria-label="Exibir em grade" aria-pressed="true" title="Exibir em grade">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </button>
+          <button class="view-switcher__button" type="button" data-view="list" aria-label="Exibir em lista" aria-pressed="false" title="Exibir em lista">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          </button>
+        </div>
+        <button class="theme-toggle" type="button" aria-label="Ativar modo claro" aria-pressed="false" title="Ativar modo claro">
+          <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/></svg>
+        </button>
       </div>
 
       <div id="teams" class="bento-grid" aria-live="polite"></div>

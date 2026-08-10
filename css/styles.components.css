@@ -10,8 +10,8 @@
   filter: blur(10vmax);
   pointer-events: none;
 }
-.ambient-a { top: -24vmax; right: -12vmax; background: rgba(63, 114, 255, .22); }
-.ambient-b { bottom: -27vmax; left: -17vmax; background: rgba(126, 78, 255, .16); }
+.ambient-a { top: -24vmax; right: -12vmax; background: var(--ambient-a); }
+.ambient-b { bottom: -27vmax; left: -17vmax; background: var(--ambient-b); }
 .noise {
   position: fixed;
   inset: 0;
@@ -25,8 +25,13 @@
   width: 100%;
   min-height: 100dvh;
   display: grid;
-  place-items: center;
+  place-items: start center;
   padding: clamp(16px, 2.8vw, 52px);
+  animation: portal-fade-in .7s ease-out both;
+}
+@keyframes portal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .portal { width: min(1640px, 100%); }
 .portal-heading {
@@ -56,32 +61,121 @@
   border: 1px solid color-mix(in srgb, var(--line-strong) 72%, transparent);
   border-radius: 12px;
   background: rgba(255,255,255,.025);
-  box-shadow: inset 0 1px rgba(255,255,255,.06), 0 10px 26px rgba(0,0,0,.14);
-  color: #cbd8fa;
+  box-shadow: inset 0 1px var(--border-highlight), var(--shadow-brand);
+  color: var(--color-brand);
   font: 600 clamp(9px, 1.05vh, 11px) 'Space Grotesk';
   letter-spacing: .1em;
 }
 .portal-heading span {
   display: block;
-  color: #cbd5ed;
+  color: var(--color-heading);
   font: 600 clamp(9px, 1.05vh, 11px) 'Space Grotesk';
   letter-spacing: .19em;
   line-height: 1.2;
 }
+.portal-heading__icon {
+  flex: 0 0 clamp(34px, 3.8vh, 42px);
+  aspect-ratio: 1;
+  color: var(--team-color, var(--color-brand));
+  border-color: color-mix(in srgb, var(--team-color, var(--color-brand)) 55%, transparent);
+  background: color-mix(in srgb, var(--team-color, var(--color-brand)) 11%, transparent);
+  transition: color .3s ease, border-color .3s ease, background-color .3s ease;
+}
+.portal-heading__icon svg { width: 23px; height: 23px; aspect-ratio: 1; display: block; flex: 0 0 23px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
+.portal-heading__title { transition: color .3s ease; }
+.portal-heading.is-team-heading .portal-heading__title { color: var(--team-color, var(--color-heading)); }
+.portal-heading__icon,
+.portal-heading > div:nth-child(2) {
+  min-height: 38px;
+  will-change: opacity, transform;
+}
+.portal-heading__back {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 0;
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--surface-card);
+  cursor: pointer;
+  font: 700 clamp(9px, 1.05vh, 11px) 'Space Grotesk';
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: color .25s ease, border-color .25s ease, background-color .25s ease, transform .25s ease;
+}
+.portal-heading__back:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--team-color, var(--color-brand)) 55%, var(--line));
+  background: color-mix(in srgb, var(--team-color, #cbd8fa) 10%, transparent);
+  transform: translateX(-2px);
+}
+.portal-heading__back span { font: inherit; letter-spacing: 0; }
+.portal-heading__back[hidden] { display: none; }
 .portal-heading p {
   margin: 8px 0 0;
-  color: color-mix(in srgb, var(--muted) 82%, #fff);
+  color: color-mix(in srgb, var(--muted) 82%, var(--color-white));
   font-size: clamp(10px, 1.15vh, 12px);
   line-height: 1.45;
   letter-spacing: .01em;
 }
-.portal-heading > div:last-child { flex: 1 1 auto; min-width: 0; }
+.portal-heading > div:nth-child(2) { flex: 1 1 auto; min-width: 0; }
+.view-switcher {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.025);
+}
+.view-switcher__button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color .2s ease, background-color .2s ease, transform .2s ease;
+}
+.view-switcher__button:hover { color: var(--text); background: var(--surface-strong); }
+.view-switcher__button:active { transform: scale(.94); }
+.view-switcher__button.is-active { color: var(--color-active); background: color-mix(in srgb, var(--color-active) 16%, transparent); }
+.view-switcher__button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle { width: 40px; height: 40px; margin-left: 8px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 11px; color: var(--muted); background: rgba(255,255,255,.025); cursor: pointer; transition: color .2s ease, background-color .2s ease, transform .2s ease; }
+.theme-toggle:hover { color: var(--text); background: rgba(255,255,255,.07); }
+.theme-toggle:active { transform: scale(.94); }
+.theme-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle__moon { display: none; }
+.theme-toggle[hidden] { display: none; }
+html[data-theme="light"] .theme-toggle__sun { display: none; }
+html[data-theme="light"] .theme-toggle__moon { display: block; }
+.portal-heading:has(+ .bento-grid.has-open) .view-switcher {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+}
+.view-switcher { transition: opacity .25s ease, transform .25s var(--ease-out); }
 
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: clamp(10px, 1.25vw, 18px);
 }
+.bento-grid.is-list-view { grid-template-columns: 1fr; grid-template-rows: none; }
+.bento-grid.is-view-transitioning { pointer-events: none; }
+.bento-grid.is-list-view .team-card { grid-column: 1; min-height: 0; }
+.bento-grid.is-list-view .team-toggle { padding-block: clamp(16px, 1.5vw, 24px); }
+.bento-grid.is-list-view .team-copy { padding-top: clamp(16px, 2.4vh, 26px); }
 .team-card {
   position: relative;
   overflow: hidden;
@@ -89,11 +183,9 @@
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
-  background:
-    radial-gradient(circle at 90% 5%, color-mix(in srgb, var(--team-color) 17%, transparent), transparent 38%),
-    linear-gradient(145deg, rgba(19, 23, 35, .9), rgba(10, 13, 21, .82));
-  box-shadow: inset 0 1px rgba(255,255,255,.035), 0 22px 70px rgba(0,0,0,.22);
-  transition: border-color .3s ease, transform .3s ease, opacity .3s ease;
+  background: radial-gradient(circle at 90% 5%, color-mix(in srgb, var(--team-color) 17%, transparent), transparent 38%), var(--card-background);
+  box-shadow: inset 0 1px rgba(255,255,255,.035), var(--shadow-card);
+  transition: border-color .36s ease, background .36s ease, box-shadow .36s ease, transform .3s ease, opacity .3s ease;
   isolation: isolate;
   animation: card-enter .55s var(--ease-out) both;
   animation-delay: calc(var(--card-order, 0) * 55ms);
@@ -115,9 +207,7 @@
 .team-card.is-open {
   grid-column: 1 / -1;
   border-color: color-mix(in srgb, var(--team-color) 55%, transparent);
-  background:
-    radial-gradient(circle at 95% 0%, color-mix(in srgb, var(--team-color) 20%, transparent), transparent 34%),
-    linear-gradient(145deg, rgba(22, 27, 41, .98), rgba(11, 14, 23, .96));
+  background: radial-gradient(circle at 95% 0%, color-mix(in srgb, var(--team-color) 20%, transparent), transparent 34%), var(--card-open-background);
   animation: panel-enter .62s var(--ease-out) both;
 }
 .bento-grid.has-open .team-card:not(.is-open) { display: none; }
@@ -151,13 +241,17 @@
   border-radius: clamp(15px, 1.5vmin, 19px);
   color: var(--team-color);
   background: color-mix(in srgb, var(--team-color) 9%, transparent);
-  box-shadow: inset 0 1px rgba(255,255,255,.06), 0 16px 35px rgba(0,0,0,.18);
+  box-shadow: inset 0 1px var(--border-highlight), var(--shadow-icon);
 }
 .team-icon svg { width: 43%; height: 43%; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
 .team-index { color: color-mix(in srgb, var(--team-color) 65%, #fff); font: 600 clamp(9px, 1.1vh, 12px) 'Space Grotesk'; letter-spacing: .12em; }
 .team-copy { margin-top: auto; padding-top: clamp(18px, 3.7vh, 42px); }
 .team-copy h2 { margin: 0 0 clamp(6px, 1vh, 10px); font: 700 clamp(24px, 3.1vmin, 46px)/1 'Space Grotesk'; letter-spacing: -.045em; }
 .team-copy p { max-width: 610px; margin: 0; color: var(--muted); font-size: clamp(10px, 1.35vh, 14px); line-height: 1.5; }
+.popular-demands { margin-top: clamp(16px, 2.2vh, 24px); display: grid; gap: 8px; }
+.popular-demands__label { color: color-mix(in srgb, var(--team-color) 72%, #fff); font: 600 clamp(8px, .9vh, 10px) 'Space Grotesk'; letter-spacing: .12em; text-transform: uppercase; }
+.popular-demands__items { display: flex; flex-wrap: wrap; gap: 6px; }
+.popular-demand { max-width: 100%; overflow: hidden; padding: 6px 9px; border: 1px solid color-mix(in srgb, var(--team-color) 24%, var(--line)); border-radius: 999px; color: var(--color-soft); background: var(--surface-card); font-size: clamp(9px, 1.05vh, 11px); line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .team-action {
   width: 100%;
   margin-top: clamp(14px, 2.4vh, 28px);
@@ -166,7 +260,7 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--line);
-  color: #c8cfdb;
+  color: var(--color-action);
   font-size: clamp(9px, 1.05vh, 11px);
   font-weight: 700;
   letter-spacing: .08em;
@@ -186,6 +280,11 @@
 
 .team-card.is-open .team-toggle { height: auto; min-height: 0; padding-bottom: clamp(12px, 1.5vh, 20px); }
 .team-card.is-open .team-toggle { cursor: default; }
+.team-card.is-open .team-icon,
+.team-card.is-open .template-count,
+.team-card.is-open .team-emoji,
+.team-card.is-open .team-copy,
+.team-card.is-open .team-topline { display: none; }
 .team-card.is-open .team-copy {
   width: 100%;
   margin-top: clamp(10px, 1.8vh, 20px);
@@ -195,6 +294,7 @@
 }
 .team-card.is-open .team-copy h2 { font-size: clamp(22px, 2.8vmin, 38px); }
 .team-card.is-open .team-action { display: none; }
+.team-card.is-open .popular-demands { display: none; }
 .close-label { display: none; align-items: center; gap: 8px; color: var(--muted); font-size: clamp(9px, 1.05vh, 11px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .team-card.is-open .close-label { display: flex; animation: fade-slide .4s .15s var(--ease-out) both; }
 .close-label span { width: clamp(27px, 3vh, 31px); height: clamp(27px, 3vh, 31px); display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: #fff; font-size: 18px; }
@@ -297,7 +397,6 @@
   .template-grid { grid-template-columns: 1fr; padding: 0 20px 20px; }
   .template-card { min-height: 112px; }
 }
-
 
 /* Otimização das superfícies que realmente passam por transformação. */
 .ambient,
@@ -466,7 +565,18 @@
   will-change: transform, opacity, background-color, border-color;
   transition: transform .3s var(--ease-out),
               background-color .3s ease,
-              border-color .3s ease;
+              border-color .3s ease,
+              color .3s ease;
+}
+html.is-theme-transitioning .template-count {
+  transition: none !important;
+}
+html.is-theme-transitioning .team-card,
+html.is-theme-transitioning .template-card,
+html.is-theme-transitioning .team-icon,
+html.is-theme-transitioning .view-switcher,
+html.is-theme-transitioning .theme-toggle {
+  transition: none !important;
 }
 
 .team-emoji {
@@ -592,7 +702,7 @@
 .team-card {
   animation: none;
   backface-visibility: hidden;
-  transform: translateZ(0);
+  transform: none;
   transition:
     opacity .28s ease,
     transform .52s var(--ease-out),
@@ -626,7 +736,7 @@
   z-index: 2;
   opacity: 1;
   visibility: visible;
-  transform: scale(1) translateZ(0);
+  transform: none;
 }
 
 .team-panel {
@@ -634,7 +744,7 @@
   grid-template-rows: 0fr;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px) translateZ(0);
+  transform: none;
   transition:
     grid-template-rows .52s var(--ease-out),
     opacity .28s ease,
@@ -646,7 +756,7 @@
   grid-template-rows: 1fr;
   opacity: 1;
   visibility: visible;
-  transform: translateY(0) translateZ(0);
+  transform: none;
   transition:
     grid-template-rows .52s var(--ease-out),
     opacity .3s ease .1s,
@@ -657,7 +767,7 @@
 .template-card {
   opacity: 0;
   animation: none;
-  transform: translateY(10px) scale(.985) translateZ(0);
+  transform: none;
 }
 
 .team-card.is-open .template-card {
@@ -714,7 +824,7 @@
 }
 
 /* ==========================================================
-   SUBMENU COMPACTO â€” evita cards gigantes e melhora a leitura
+   SUBMENU COMPACTO evita cards gigantes e melhora a leitura
    ========================================================== */
 .team-card.is-open .team-panel-inner {
   display: flex;
@@ -812,3 +922,10 @@
   }
 }
 
+/* Ajuste tipográfico para melhorar a leitura sem alterar o layout. */
+.portal-heading span { font-size: clamp(10px, 1.15vh, 12px); }
+.portal-heading p { font-size: clamp(11px, 1.25vh, 13px); }
+.team-copy p { font-size: clamp(11px, 1.45vh, 15px); }
+.team-action { font-size: clamp(10px, 1.15vh, 12px); }
+.popular-demands__label { font-size: clamp(9px, 1vh, 11px); }
+.popular-demand { font-size: clamp(10px, 1.15vh, 12px); }
