@@ -178,6 +178,26 @@ html[data-theme="light"] .theme-toggle__moon { display: block; }
 .bento-grid.is-list-view .team-copy { margin-top: 0; }
 .bento-grid.is-list-view .team-toggle { padding-block: clamp(16px, 1.5vw, 24px); }
 .bento-grid.is-list-view .team-copy { padding-top: clamp(16px, 2.4vh, 26px); }
+.bento-grid.is-list-view .team-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 32%);
+  grid-template-rows: auto 1fr auto;
+  column-gap: clamp(24px, 4vw, 64px);
+}
+.bento-grid.is-list-view .team-topline { grid-column: 1 / -1; }
+.bento-grid.is-list-view .team-copy { grid-column: 1; grid-row: 2 / 4; align-self: center; }
+.bento-grid.is-list-view .popular-demands { display: none !important; }
+.bento-grid.is-list-view .team-action {
+  position: absolute;
+  right: 36px;
+  bottom: 24px;
+  gap: 14px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+}
 .team-card {
   position: relative;
   overflow: hidden;
