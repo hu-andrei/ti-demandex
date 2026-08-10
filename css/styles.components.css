@@ -173,7 +173,9 @@ html[data-theme="light"] .theme-toggle__moon { display: block; }
 }
 .bento-grid.is-list-view { grid-template-columns: 1fr; grid-template-rows: none; }
 .bento-grid.is-view-transitioning { pointer-events: none; }
-.bento-grid.is-list-view .team-card { grid-column: 1; min-height: 0; }
+.bento-grid.is-list-view .team-card { grid-column: 1; min-height: 0; height: auto; }
+.bento-grid.is-list-view .team-toggle { height: auto; }
+.bento-grid.is-list-view .team-copy { margin-top: 0; }
 .bento-grid.is-list-view .team-toggle { padding-block: clamp(16px, 1.5vw, 24px); }
 .bento-grid.is-list-view .team-copy { padding-top: clamp(16px, 2.4vh, 26px); }
 .team-card {
