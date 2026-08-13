@@ -13,7 +13,7 @@ const teams = [
     id: 'suporte', name: 'Suporte', emoji: '🛠️', color: '#5b8cff', icon: icons.support,
     description: 'Incidentes, acessos, equipamentos, infraestrutura e atendimento ao usuário.',
     templates: [
-      ['Telefonia | Solicitação ou ajuste', 'Solicitação de telefone, carregador ou equipamentos de comunicação.', 'https://github.com/ti-hu-org/ti-demandas/blob/main/.github/ISSUE_TEMPLATE/30-telefonia.yml?plain=1', 'Telefonia'],
+      ['Telefonia | Solicitação ou ajuste', 'Solicitação de telefone, carregador ou equipamentos de comunicação.', 'https://github.com/ti-hu-org/ti-demandas/issues/new?template=30-telefonia.yml', 'Telefonia'],
       ['Solicitação geral', 'Incidentes, dúvidas, acessos, instalações, equipamentos ou serviços de TI.', '01-suporte-solicitacao-geral.yml'],
       ['Chamado SAT', 'Registre um problema encaminhado ao SAT e acompanhe o chamado até a conclusão.', '02-suporte-chamado-sat.yml'],
       ['Acompanhamento diário SAT', 'Atualizações, cobranças e pendências dos chamados SAT acompanhados no dia.', '03-suporte-acompanhamento-diario-sat.yml'],
