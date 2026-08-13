@@ -2,10 +2,10 @@ SHELL := /bin/sh
 
 PORT ?= 8000
 HOST ?= 127.0.0.1
-PYTHON ?= python.exe
+PYTHON ?= python3
 PID_FILE := .server.pid
 
-.PHONY: help start stop restart
+.PHONY: help start stop restart clean
 
 help:
 	@echo "Comandos disponíveis:"
@@ -13,6 +13,7 @@ help:
 	@echo "  make stop     Para o servidor local"
 	@echo "  make restart  Reinicia o servidor local"
 	@echo "  make help     Exibe esta ajuda"
+	@echo "  make clean    Remove arquivos temporários"
 
 start:
 	@if [ -f "$(PID_FILE)" ] && kill -0 "$$(cat "$(PID_FILE)")" 2>/dev/null; then \
@@ -34,3 +35,8 @@ stop:
 	fi
 
 restart: stop start
+
+clean:
+	@echo "Removendo arquivos temporários..."
+	@rm -f "$(PID_FILE)" .server.log
+	@echo "Arquivos temporários removidos."

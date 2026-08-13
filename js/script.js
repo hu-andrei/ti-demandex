@@ -13,6 +13,7 @@ const teams = [
     id: 'suporte', name: 'Suporte', emoji: '🛠️', color: '#5b8cff', icon: icons.support,
     description: 'Incidentes, acessos, equipamentos, infraestrutura e atendimento ao usuário.',
     templates: [
+      ['Telefonia | Solicitação ou ajuste', 'Solicitação de telefone, carregador ou equipamentos de comunicação.', 'https://github.com/ti-hu-org/ti-demandas/blob/main/.github/ISSUE_TEMPLATE/30-telefonia.yml?plain=1', 'Telefonia'],
       ['Solicitação geral', 'Incidentes, dúvidas, acessos, instalações, equipamentos ou serviços de TI.', '01-suporte-solicitacao-geral.yml'],
       ['Chamado SAT', 'Registre um problema encaminhado ao SAT e acompanhe o chamado até a conclusão.', '02-suporte-chamado-sat.yml'],
       ['Acompanhamento diário SAT', 'Atualizações, cobranças e pendências dos chamados SAT acompanhados no dia.', '03-suporte-acompanhamento-diario-sat.yml'],
@@ -31,8 +32,8 @@ const teams = [
     id: 'dev', name: 'Desenvolvimento', emoji: '💻', color: '#57d99d', icon: icons.dev,
     description: 'Sistemas, APIs, integrações, novas funcionalidades e melhorias técnicas.',
     templates: [
-      ['Funcionalidade, correção ou integração', 'Funcionalidades, integrações, melhorias técnicas ou correções em sistemas.', '20-dev-funcionalidade-correcao-integracao.yml'],
-      ['Setup técnico', 'Configurações, padronizações e manutenções que não são desenvolvimento de funcionalidade.', '21-dev-setup-tecnico.yml']
+      ['Funcionalidade, correção ou integração', 'Funcionalidades, integrações, melhorias técnicas ou correções em sistemas.', '20-dev-funcionalidade-correcao-integracao.yml', 'Geral'],
+      ['Setup técnico', 'Configurações, padronizações e manutenções que não são desenvolvimento de funcionalidade.', '21-dev-setup-tecnico.yml', 'Setup técnico']
     ]
   },
   {
@@ -52,8 +53,22 @@ let ambientAnimations = [];
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const viewSwitcher = document.querySelector('.view-switcher');
 const VIEW_STORAGE_KEY = 'ti-demandas-view';
-const THEME_STORAGE_KEY = 'ti-demandas-theme';
+const PROFILE_STORAGE_KEY = 'ti-demandas-profile';
+const PALETTE_STORAGE_KEY = 'ti-demandas-palette';
+const FONT_STORAGE_KEY = 'ti-demandas-font';
+const TEXTURE_STORAGE_KEY = 'ti-demandas-card-texture';
 const themeToggle = document.querySelector('.theme-toggle');
+const settingsToggle = document.querySelector('.settings-toggle');
+const settings = document.querySelector('.settings');
+const settingsPanel = document.querySelector('.settings-panel');
+const settingsClose = document.querySelector('.settings-close');
+const settingsSurface = document.querySelector('.settings-panel__surface');
+const settingsFont = document.querySelector('#settings-font');
+const settingsTexture = document.querySelector('#settings-texture');
+const paletteOptions = document.querySelectorAll('[data-palette]');
+const profileNickname = document.querySelector('#profile-nickname');
+const profileTeam = document.querySelector('#profile-team');
+const productVersion = document.querySelector('#product-version');
 const portalHeading = document.querySelector('.portal-heading');
 const portalHeadingIcon = document.querySelector('.portal-heading__icon');
 const portalHeadingTitle = document.querySelector('.portal-heading__title');
@@ -66,6 +81,7 @@ const defaultPortalHeading = {
 let headerTransitionFrame = null;
 let headerAnimations = [];
 let themeAnimation = null;
+let settingsAnimation = null;
 
 function updatePortalHeading(team, animateChange = false) {
   const title = team?.name.toUpperCase() || defaultPortalHeading.title;
@@ -91,16 +107,16 @@ function updatePortalHeading(team, animateChange = false) {
   if (headerTransitionFrame) cancelAnimationFrame(headerTransitionFrame);
   const parts = [portalHeadingIcon, portalHeadingTitle, portalHeadingDescription].filter(Boolean);
   const exitAnimations = parts.map(element => element.animate([
-    { opacity: 1, transform: 'translateY(0)' },
-    { opacity: 0, transform: 'translateY(5px)' }
+    { opacity: 1, transform: 'scale(1)' },
+    { opacity: 0, transform: 'scale(.985)' }
   ], { duration: 150, easing: 'ease-in', fill: 'both' }));
   headerAnimations.push(...exitAnimations);
 
   Promise.all(exitAnimations.map(animation => animation.finished)).then(() => {
     commit();
     const enterAnimations = parts.map(element => element.animate([
-      { opacity: 0, transform: 'translateY(-5px)' },
-      { opacity: 1, transform: 'translateY(0)' }
+      { opacity: 0, transform: 'scale(.985)' },
+      { opacity: 1, transform: 'scale(1)' }
     ], { duration: 360, delay: 20, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' }));
     headerAnimations = enterAnimations;
   }).catch(() => {
@@ -108,20 +124,40 @@ function updatePortalHeading(team, animateChange = false) {
   });
 }
 
-function setTheme(theme, animateChange = false) {
-  const light = theme === 'light';
-  const commit = () => {
-    document.documentElement.dataset.theme = light ? 'light' : 'dark';
-    themeToggle?.setAttribute('aria-pressed', String(light));
-    themeToggle?.setAttribute('aria-label', light ? 'Ativar modo escuro' : 'Ativar modo claro');
-    themeToggle?.setAttribute('title', light ? 'Ativar modo escuro' : 'Ativar modo claro');
-  };
+function animateHeaderControls() {
+  if (motion.matches) return;
 
+  requestAnimationFrame(() => {
+    [portalHeadingBack, viewSwitcher]
+      .filter(control => control && !control.hidden && getComputedStyle(control).display !== 'none')
+      .forEach((control, index) => {
+        control.animate([
+          { opacity: 0 },
+          { opacity: 1 }
+        ], {
+          duration: 280,
+          delay: 70 + index * 45,
+          easing: 'cubic-bezier(.16, 1, .3, 1)',
+          fill: 'backwards'
+        });
+      });
+  });
+}
+
+function setPalette(palette, animateChange = false) {
+  const selected = ['default', 'dracula', 'catppuccin', 'everforest', 'nord', 'tokyo-night', 'gruvbox', 'solarized', 'one-dark', 'rose-pine', 'monokai'].includes(palette) ? palette : 'default';
+  const commit = () => {
+    document.documentElement.dataset.palette = selected;
+    paletteOptions.forEach(option => {
+      const active = option.dataset.palette === selected;
+      option.classList.toggle('is-active', active);
+      option.setAttribute('aria-checked', String(active));
+    });
+  };
   if (!animateChange || motion.matches) {
     commit();
     return;
   }
-
   themeAnimation?.cancel();
   document.documentElement.classList.add('is-theme-transitioning');
   themeAnimation = document.documentElement.animate([
@@ -135,6 +171,37 @@ function setTheme(theme, animateChange = false) {
   }, () => {
     document.documentElement.classList.remove('is-theme-transitioning');
   });
+}
+
+function setFont(font, animateChange = false) {
+  const selected = ['dm-sans', 'inter', 'manrope', 'space-grotesk', 'outfit', 'plus-jakarta', 'ibm-plex', 'fira-sans', 'source-sans'].includes(font) ? font : 'dm-sans';
+  const commit = () => {
+    document.documentElement.dataset.font = selected;
+    if (settingsFont) settingsFont.value = selected;
+  };
+  if (!animateChange || motion.matches) {
+    commit();
+    return;
+  }
+  const textTargets = document.querySelectorAll([
+    'h1', 'h2', 'h3', 'p', 'label', 'option',
+    '.portal-heading__title', '.template-number', '.template-count',
+    '.team-action', '.popular-demands__label', '.popular-demand',
+    '.settings-tab', '.palette-option', '.settings-save'
+  ].join(','));
+  const fontAnimations = [...textTargets].map(element => element.animate([
+    { opacity: 1 },
+    { opacity: 0, offset: .5 },
+    { opacity: 1 }
+  ], { duration: 360, easing: 'ease-in-out', fill: 'both' }));
+  setTimeout(commit, 180);
+  Promise.all(fontAnimations.map(animation => animation.finished)).catch(() => {});
+}
+
+function setCardTexture(texture) {
+  const selected = ['none', 'mist', 'grain', 'aurora', 'paper', 'lines', 'glow', 'waves', 'topography'].includes(texture) ? texture : 'none';
+  document.documentElement.dataset.cardTexture = selected;
+  if (settingsTexture) settingsTexture.value = selected;
 }
 
 function setView(view) {
@@ -198,7 +265,7 @@ function animateDecorations() {
     devSlash: [{ transform: 'rotate(0deg) scale(.92)', opacity: .72 }, { offset: .5, transform: 'rotate(7deg) scale(1.08)', opacity: 1 }, { transform: 'rotate(0deg) scale(.92)', opacity: .72 }],
     rpaFloat: [{ transform: 'translateY(0) rotate(0deg)' }, { offset: .45, transform: 'translateY(-1.8px) rotate(-1.5deg)' }, { offset: .58, transform: 'translateY(-1.8px) rotate(1.5deg)' }, { transform: 'translateY(0) rotate(0deg)' }],
     rpaFace: [{ opacity: 1 }, { offset: .47, opacity: .18 }, { offset: .49, opacity: 1 }, { transform: 'none', opacity: 1 }],
-    emoji: [{ transform: 'translateY(-42%) rotate(-7deg) scale(1)' }, { transform: 'translateY(-48%) rotate(-2deg) scale(1.045)' }, { transform: 'translateY(-42%) rotate(-7deg) scale(1)' }]
+    emoji: [{ transform: 'translateY(-50%) rotate(-7deg) scale(1)' }, { transform: 'translateY(-54%) rotate(-2deg) scale(1.045)' }, { transform: 'translateY(-50%) rotate(-7deg) scale(1)' }]
   };
   root.querySelectorAll('.team-icon--suporte svg').forEach(el => animateLoop(el, keyframes.supportTool, { duration: 3200, easing: 'ease-in-out' }));
   root.querySelectorAll('.team-icon--suporte svg path:first-child').forEach(el => animateLoop(el, keyframes.supportGrip, { duration: 3200, easing: 'ease-in-out' }));
@@ -232,8 +299,9 @@ function animate(element, keyframes, options) {
 
 function templateMarkup(template, index, color) {
   const [title, description, file] = template;
+  const href = file.startsWith('http') ? file : `${ISSUE_BASE}${file}`;
   return `
-    <a class="template-card" href="${ISSUE_BASE}${file}" target="_blank" rel="noreferrer" style="--team-color:${color};--template-order:${index}">
+    <a class="template-card" href="${href}" target="_blank" rel="noreferrer" style="--team-color:${color};--template-order:${index}">
       <div>
         <span class="template-number">TEMPLATE ${String(index + 1).padStart(2, '0')}</span>
         <h3>${title}</h3>
@@ -241,6 +309,17 @@ function templateMarkup(template, index, color) {
       </div>
       <span class="template-arrow" aria-hidden="true">↗</span>
     </a>`;
+}
+
+function templateGroupsMarkup(team) {
+  const categories = [...new Set(team.templates.map(template => template[3] || 'Geral'))];
+  const grouped = categories.map(category => [category, team.templates.filter(template => (template[3] || 'Geral') === category)]);
+  let index = 0;
+  return grouped.filter(([, templates]) => templates.length).map(([category, templates]) => `
+    <section class="template-group">
+      ${grouped.length > 1 ? `<h3 class="template-group__title">${category}</h3>` : ''}
+      <div class="template-group__cards">${templates.map(template => templateMarkup(template, index++, team.color)).join('')}</div>
+    </section>`).join('');
 }
 
 function popularMarkup(team) {
@@ -267,7 +346,7 @@ function mountPortal() {
       <div id="panel-${team.id}" class="team-panel" aria-hidden="true">
         <div class="team-panel-inner">
           <div class="template-grid">
-            ${team.templates.map((template, index) => templateMarkup(template, index, team.color)).join('')}
+            ${templateGroupsMarkup(team)}
           </div>
         </div>
       </div>
@@ -285,15 +364,17 @@ function applyState() {
   root.classList.toggle('has-open', hasOpenTeam);
   portalHeading?.classList.toggle('is-team-heading', hasOpenTeam);
   portalHeading?.style.setProperty('--team-color', selectedTeam?.color || '#cbd8fa');
-  if (themeToggle) {
-    themeToggle.hidden = hasOpenTeam;
-    themeToggle.disabled = hasOpenTeam;
+  if (settingsToggle) {
+    settingsToggle.hidden = hasOpenTeam;
+    settingsToggle.disabled = hasOpenTeam;
   }
+  if (settings) settings.hidden = hasOpenTeam;
   if (portalHeadingBack) {
     portalHeadingBack.hidden = !hasOpenTeam;
     portalHeadingBack.disabled = !hasOpenTeam;
   }
   updatePortalHeading(selectedTeam, hasOpenTeam || wasTeamHeading);
+  animateHeaderControls();
 
   root.querySelectorAll('.team-card').forEach(card => {
     const isOpen = card.dataset.team === openTeam;
@@ -349,16 +430,170 @@ function toggleTeam(id) {
 }
 
 mountPortal();
+const savedProfile = JSON.parse(localStorage.getItem(PROFILE_STORAGE_KEY) || '{}');
+teams.forEach(team => {
+  const option = document.createElement('option');
+  option.value = team.id;
+  option.textContent = team.name;
+  profileTeam?.append(option);
+});
+if (profileNickname) profileNickname.value = savedProfile.nickname || '';
+if (profileTeam) profileTeam.value = teams.some(team => team.id === savedProfile.team) ? savedProfile.team : '';
+if (savedProfile.nickname) {
+  defaultPortalHeading.description = `Olá, ${savedProfile.nickname}. Selecione uma equipe para visualizar os formulários disponíveis.`;
+}
+openTeam = teams.some(team => team.id === savedProfile.team) ? savedProfile.team : null;
 applyState();
+if (openTeam) {
+  root.querySelectorAll('.team-card.is-open .template-card').forEach(card => {
+    card.style.opacity = '1';
+  });
+}
 portalHeadingBack?.addEventListener('click', () => {
   if (openTeam) toggleTeam(openTeam);
 });
 animateDecorations();
-setTheme(localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark');
-themeToggle?.addEventListener('click', () => {
-  const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-  localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-  setTheme(nextTheme, true);
+setPalette(localStorage.getItem(PALETTE_STORAGE_KEY) || 'default');
+setFont(localStorage.getItem(FONT_STORAGE_KEY) || 'dm-sans');
+setCardTexture(localStorage.getItem(TEXTURE_STORAGE_KEY) || 'none');
+const versionPath = window.location.pathname.includes('/html/') ? '../VERSION' : 'VERSION';
+fetch(versionPath)
+  .then(response => response.ok ? response.text() : Promise.reject())
+  .then(version => { if (productVersion) productVersion.textContent = `v${version.trim()}`; })
+  .catch(() => { if (productVersion) productVersion.textContent = 'Não disponível'; });
+settingsFont?.addEventListener('change', () => {
+  localStorage.setItem(FONT_STORAGE_KEY, settingsFont.value);
+  setFont(settingsFont.value, true);
+});
+settingsTexture?.addEventListener('change', () => {
+  localStorage.setItem(TEXTURE_STORAGE_KEY, settingsTexture.value);
+  setCardTexture(settingsTexture.value);
+});
+paletteOptions.forEach(option => {
+  option.addEventListener('click', () => {
+    const palette = option.dataset.palette;
+    localStorage.setItem(PALETTE_STORAGE_KEY, palette);
+    setPalette(palette, true);
+  });
+});
+function openSettings() {
+  if (!settingsPanel || !settingsPanel.hidden) return;
+  settingsAnimation?.cancel();
+  settingsPanel.hidden = false;
+  document.body.classList.add('is-settings-page');
+  settingsToggle?.setAttribute('aria-expanded', 'true');
+  settingsToggle?.animate([
+    { boxShadow: '0 0 0 rgba(0,0,0,0)', borderColor: 'rgba(255,255,255,.09)' },
+    { boxShadow: '0 0 0 4px rgba(203,216,250,.10)', borderColor: 'rgba(203,216,250,.42)' },
+    { boxShadow: '0 0 0 rgba(0,0,0,0)', borderColor: 'rgba(255,255,255,.09)' }
+  ], { duration: 420, easing: 'cubic-bezier(.16, 1, .3, 1)' });
+  if (motion.matches) return;
+  settingsPanel.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180, easing: 'ease-out', fill: 'both' });
+  settingsAnimation = settingsSurface?.animate([
+    { opacity: 0, transform: 'translateY(22px) scale(.975)' },
+    { opacity: 1, transform: 'translateY(0) scale(1)' }
+  ], { duration: 420, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' });
+  settingsSurface?.querySelectorAll('.settings-panel__header, .settings-tabs, .settings-section:not([hidden]), .settings-panel__footer')
+    .forEach((element, index) => element.animate([
+      { opacity: 0, transform: 'translateY(8px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: 300, delay: 90 + index * 55, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' }));
+}
+settingsToggle?.addEventListener('click', () => {
+  if (settingsPanel?.hidden) openSettings();
+  else closeSettings();
+});
+function closeSettings() {
+  if (!settingsPanel || settingsPanel.hidden) return;
+  settingsToggle?.setAttribute('aria-expanded', 'false');
+  settingsToggle?.animate([
+    { boxShadow: '0 0 0 4px rgba(203,216,250,.10)' },
+    { boxShadow: '0 0 0 rgba(0,0,0,0)' }
+  ], { duration: 240, easing: 'ease-out' });
+  settingsAnimation?.cancel();
+  if (motion.matches) {
+    settingsPanel.hidden = true;
+    document.body.classList.remove('is-settings-page');
+    return;
+  }
+  const sheet = settingsSurface?.animate([
+    { opacity: 1, transform: 'translateY(0) scale(1)' },
+    { opacity: 0, transform: 'translateY(12px) scale(.985)' }
+  ], { duration: 190, easing: 'ease-in', fill: 'both' });
+  settingsPanel.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 210, easing: 'ease-in', fill: 'both' });
+  settingsAnimation = sheet;
+  sheet?.finished.then(() => {
+    if (settingsAnimation === sheet) {
+      settingsPanel.hidden = true;
+      document.body.classList.remove('is-settings-page');
+    }
+  }, () => {});
+}
+settingsClose?.addEventListener('click', closeSettings);
+document.querySelectorAll('[data-settings-tab]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const activeTab = tab.dataset.settingsTab;
+    const nextPanel = document.querySelector(`#settings-${activeTab}`);
+    const currentPanel = document.querySelector('.settings-section[role="tabpanel"]:not([hidden])');
+    if (nextPanel === currentPanel) return;
+
+    const activate = () => {
+      if (currentPanel) currentPanel.hidden = true;
+      if (nextPanel) {
+        nextPanel.hidden = false;
+        if (!motion.matches) {
+          nextPanel.animate([
+            { opacity: 0, transform: 'translateX(10px)' },
+            { opacity: 1, transform: 'translateX(0)' }
+          ], { duration: 280, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' });
+        }
+      }
+    };
+
+    document.querySelectorAll('[data-settings-tab]').forEach(item => {
+      const active = item === tab;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-selected', String(active));
+    });
+    if (!motion.matches) {
+      tab.animate([
+        { opacity: .55 },
+        { opacity: 1 }
+      ], { duration: 220, easing: 'ease-out' });
+    }
+    if (currentPanel && !motion.matches) {
+      const exit = currentPanel.animate([
+        { opacity: 1, transform: 'translateX(0)' },
+        { opacity: 0, transform: 'translateX(-8px)' }
+      ], { duration: 150, easing: 'ease-in', fill: 'both' });
+      exit.finished.then(activate, activate);
+    } else activate();
+  });
+});
+settingsPanel?.addEventListener('click', event => {
+  if (event.target === settingsPanel) closeSettings();
+});
+settingsPanel?.addEventListener('submit', event => {
+  event.preventDefault();
+  const profile = { nickname: profileNickname?.value.trim() || '', team: profileTeam?.value || '' };
+  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  defaultPortalHeading.description = profile.nickname
+    ? `Olá, ${profile.nickname}. Selecione uma equipe para visualizar os formulários disponíveis.`
+    : 'Selecione uma equipe para visualizar os formulários disponíveis.';
+  event.submitter?.animate([
+    { opacity: 1 },
+    { opacity: .7, offset: .45 },
+    { opacity: 1 }
+  ], { duration: 360, easing: 'ease-in-out' });
+  closeSettings();
+});
+document.addEventListener('click', event => {
+  if (settingsPanel && !settingsPanel.hidden && !event.target.closest('.settings')) {
+    closeSettings();
+  }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && settingsPanel && !settingsPanel.hidden) closeSettings();
 });
 const savedView = localStorage.getItem(VIEW_STORAGE_KEY);
 if (savedView === 'list') {
