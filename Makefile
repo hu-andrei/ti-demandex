@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-PORT ?= 8000
+PORT ?= 8010
 HOST ?= 127.0.0.1
 PYTHON ?= python3
 PID_FILE := .server.pid

@@ -41,15 +41,21 @@
           <span class="portal-heading__title">PORTAL DE DEMANDAS</span>
           <p class="portal-heading__description">Selecione uma equipe para visualizar os formulários disponíveis.</p>
         </div>
-        <button class="portal-heading__back" type="button" aria-label="Voltar" hidden>
-          <span aria-hidden="true">←</span> Voltar
-        </button>
+        <div class="portal-heading__team-actions" hidden>
+          <a class="portal-heading__project" href="#" target="_blank" rel="noreferrer" aria-label="Abrir quadro de issues da equipe" title="Abrir quadro de issues">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9"/><path d="M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></svg><span>Quadro</span>
+          </a>
+          <button class="portal-heading__back" type="button" aria-label="Fechar equipe" title="Fechar equipe"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg></button>
+        </div>
         <div class="view-switcher" role="group" aria-label="Formato de apresentação">
           <button class="view-switcher__button is-active" type="button" data-view="grid" aria-label="Exibir em grade" aria-pressed="true" title="Exibir em grade">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </button>
           <button class="view-switcher__button" type="button" data-view="list" aria-label="Exibir em lista" aria-pressed="false" title="Exibir em lista">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          </button>
+          <button class="view-switcher__button" type="button" data-view="menu" aria-label="Exibir em modo menu" aria-pressed="false" title="Exibir em modo menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v6H4zM4 13h6v6H4zM14 7h6M14 12h6M14 17h6"/></svg>
           </button>
         </div>
         <button class="theme-toggle" type="button" aria-label="Ativar modo claro" aria-pressed="false" title="Ativar modo claro" hidden>
@@ -98,6 +104,7 @@
                 </div>
                 <label class="settings-font"><span>Fonte da interface</span><select id="settings-font" name="font"><option value="dm-sans">DM Sans</option><option value="inter">Inter</option><option value="manrope">Manrope</option><option value="space-grotesk">Space Grotesk</option><option value="outfit">Outfit</option><option value="plus-jakarta">Plus Jakarta Sans</option><option value="ibm-plex">IBM Plex Sans</option><option value="fira-sans">Fira Sans</option><option value="source-sans">Source Sans 3</option></select></label>
                 <label class="settings-texture"><span>Textura dos cards</span><select id="settings-texture" name="texture"><option value="none">Sem textura</option><option value="mist">Névoa suave</option><option value="grain">Grão refinado</option><option value="aurora">Aurora sutil</option><option value="paper">Papel acetinado</option><option value="lines">Linhas delicadas</option><option value="glow">Brilho difuso</option><option value="waves">Ondas suaves</option><option value="topography">Topografia</option></select></label>
+                <label class="settings-switch"><span><strong>Hover 3D nos cards</strong><small>Inclina os cards conforme a posição do cursor.</small></span><input id="settings-card-tilt" name="card-tilt" type="checkbox" role="switch"></label>
               </div>
               <div class="settings-section settings-info" id="settings-info" role="tabpanel" aria-labelledby="settings-tab-info" hidden>
                 <p>Informações do produto</p>

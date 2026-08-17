@@ -11,6 +11,7 @@ const icons = {
 const teams = [
   {
     id: 'suporte', name: 'Suporte', emoji: '🛠️', color: '#5b8cff', icon: icons.support,
+    projectUrl: 'https://github.com/orgs/ti-hu-org/projects/6/views/15',
     description: 'Incidentes, acessos, equipamentos, infraestrutura e atendimento ao usuário.',
     templates: [
       ['Telefonia | Solicitação ou ajuste', 'Solicitação de telefone, carregador ou equipamentos de comunicação.', 'https://github.com/ti-hu-org/ti-demandas/issues/new?template=30-telefonia.yml', 'Telefonia'],
@@ -22,6 +23,7 @@ const teams = [
   },
   {
     id: 'bi', name: 'Business Intelligence', emoji: '📊', color: '#f4ad55', icon: icons.bi,
+    projectUrl: 'https://github.com/orgs/ti-hu-org/projects/6/views/12',
     description: 'Dashboards, relatórios, indicadores, análises e qualidade dos dados.',
     templates: [
       ['Dashboard, relatório ou análise', 'Dashboards, relatórios, indicadores, análises ou ajustes em dados.', '10-bi-dashboard-relatorio-analise.yml'],
@@ -30,6 +32,7 @@ const teams = [
   },
   {
     id: 'dev', name: 'Desenvolvimento', emoji: '💻', color: '#57d99d', icon: icons.dev,
+    projectUrl: 'https://github.com/orgs/ti-hu-org/projects/6/views/13',
     description: 'Sistemas, APIs, integrações, novas funcionalidades e melhorias técnicas.',
     templates: [
       ['Funcionalidade, correção ou integração', 'Funcionalidades, integrações, melhorias técnicas ou correções em sistemas.', '20-dev-funcionalidade-correcao-integracao.yml', 'Geral'],
@@ -38,6 +41,7 @@ const teams = [
   },
   {
     id: 'rpa', name: 'RPA', emoji: '🤖', color: '#a98aff', icon: icons.rpa,
+    projectUrl: 'https://github.com/orgs/ti-hu-org/projects/6/views/14',
     description: 'Automações, robôs, rotinas operacionais e monitoramento de processos.',
     templates: [
       ['Automação ou ajuste', 'Automações de processos repetitivos, integrações operacionais ou ajustes em robôs.', '30-rpa-automacao-ajuste.yml']
@@ -57,6 +61,7 @@ const PROFILE_STORAGE_KEY = 'ti-demandas-profile';
 const PALETTE_STORAGE_KEY = 'ti-demandas-palette';
 const FONT_STORAGE_KEY = 'ti-demandas-font';
 const TEXTURE_STORAGE_KEY = 'ti-demandas-card-texture';
+const CARD_TILT_STORAGE_KEY = 'ti-demandas-card-tilt';
 const themeToggle = document.querySelector('.theme-toggle');
 const settingsToggle = document.querySelector('.settings-toggle');
 const settings = document.querySelector('.settings');
@@ -65,6 +70,7 @@ const settingsClose = document.querySelector('.settings-close');
 const settingsSurface = document.querySelector('.settings-panel__surface');
 const settingsFont = document.querySelector('#settings-font');
 const settingsTexture = document.querySelector('#settings-texture');
+const settingsCardTilt = document.querySelector('#settings-card-tilt');
 const paletteOptions = document.querySelectorAll('[data-palette]');
 const profileNickname = document.querySelector('#profile-nickname');
 const profileTeam = document.querySelector('#profile-team');
@@ -74,6 +80,8 @@ const portalHeadingIcon = document.querySelector('.portal-heading__icon');
 const portalHeadingTitle = document.querySelector('.portal-heading__title');
 const portalHeadingDescription = document.querySelector('.portal-heading__description');
 const portalHeadingBack = document.querySelector('.portal-heading__back');
+const portalHeadingTeamActions = document.querySelector('.portal-heading__team-actions');
+const portalHeadingProject = document.querySelector('.portal-heading__project');
 const defaultPortalHeading = {
   title: portalHeadingTitle?.textContent || 'PORTAL DE DEMANDAS',
   description: portalHeadingDescription?.textContent || ''
@@ -204,16 +212,43 @@ function setCardTexture(texture) {
   if (settingsTexture) settingsTexture.value = selected;
 }
 
+function setCardTilt(enabled) {
+  const active = Boolean(enabled) && !motion.matches;
+  document.documentElement.classList.toggle('has-card-tilt', active);
+  if (settingsCardTilt) settingsCardTilt.checked = Boolean(enabled);
+  if (!active) root.querySelectorAll('.team-card, .template-card').forEach(card => {
+    card.style.removeProperty('transform');
+  });
+}
+
+function setupCardTilt() {
+  root.addEventListener('pointermove', event => {
+    if (!document.documentElement.classList.contains('has-card-tilt')) return;
+    const card = event.target.closest('.team-card, .template-card');
+    if (!card || card.classList.contains('is-open') || !root.contains(card)) return;
+    const bounds = card.getBoundingClientRect();
+    const rotateY = ((event.clientX - bounds.left) / bounds.width - .5) * 8;
+    const rotateX = ((event.clientY - bounds.top) / bounds.height - .5) * -8;
+    card.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+  });
+  root.addEventListener('pointerout', event => {
+    const card = event.target.closest('.team-card, .template-card');
+    if (card && !card.contains(event.relatedTarget)) card.style.removeProperty('transform');
+  });
+}
+
 function setView(view) {
-  const isList = view === 'list';
-  const alreadyActive = root.classList.contains('is-list-view') === isList;
+  const selectedView = ['grid', 'list', 'menu'].includes(view) ? view : 'grid';
+  const alreadyActive = root.dataset.view === selectedView;
   if (alreadyActive || root.classList.contains('is-view-transitioning')) return;
-  localStorage.setItem(VIEW_STORAGE_KEY, view);
+  localStorage.setItem(VIEW_STORAGE_KEY, selectedView);
 
   const commitView = () => {
-    root.classList.toggle('is-list-view', isList);
+    root.dataset.view = selectedView;
+    root.classList.toggle('is-list-view', selectedView === 'list');
+    root.classList.toggle('is-menu-view', selectedView === 'menu');
     viewSwitcher?.querySelectorAll('[data-view]').forEach(button => {
-      const active = button.dataset.view === view;
+      const active = button.dataset.view === selectedView;
       button.classList.toggle('is-active', active);
       button.setAttribute('aria-pressed', String(active));
     });
@@ -370,9 +405,10 @@ function applyState() {
   }
   if (settings) settings.hidden = hasOpenTeam;
   if (portalHeadingBack) {
-    portalHeadingBack.hidden = !hasOpenTeam;
     portalHeadingBack.disabled = !hasOpenTeam;
   }
+  if (portalHeadingTeamActions) portalHeadingTeamActions.hidden = !hasOpenTeam;
+  if (portalHeadingProject && selectedTeam) portalHeadingProject.href = selectedTeam.projectUrl;
   updatePortalHeading(selectedTeam, hasOpenTeam || wasTeamHeading);
   animateHeaderControls();
 
@@ -383,6 +419,7 @@ function applyState() {
 
     card.classList.toggle('is-open', isOpen);
     card.classList.toggle('is-inactive', hasOpenTeam && !isOpen);
+    if (isOpen) card.style.removeProperty('transform');
     button.setAttribute('aria-expanded', String(isOpen));
     panel.setAttribute('aria-hidden', String(!isOpen));
 
@@ -456,6 +493,8 @@ animateDecorations();
 setPalette(localStorage.getItem(PALETTE_STORAGE_KEY) || 'default');
 setFont(localStorage.getItem(FONT_STORAGE_KEY) || 'dm-sans');
 setCardTexture(localStorage.getItem(TEXTURE_STORAGE_KEY) || 'none');
+setCardTilt(localStorage.getItem(CARD_TILT_STORAGE_KEY) === 'true');
+setupCardTilt();
 const versionPath = window.location.pathname.includes('/html/') ? '../VERSION' : 'VERSION';
 fetch(versionPath)
   .then(response => response.ok ? response.text() : Promise.reject())
@@ -468,6 +507,10 @@ settingsFont?.addEventListener('change', () => {
 settingsTexture?.addEventListener('change', () => {
   localStorage.setItem(TEXTURE_STORAGE_KEY, settingsTexture.value);
   setCardTexture(settingsTexture.value);
+});
+settingsCardTilt?.addEventListener('change', () => {
+  localStorage.setItem(CARD_TILT_STORAGE_KEY, String(settingsCardTilt.checked));
+  setCardTilt(settingsCardTilt.checked);
 });
 paletteOptions.forEach(option => {
   option.addEventListener('click', () => {
@@ -596,12 +639,14 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && settingsPanel && !settingsPanel.hidden) closeSettings();
 });
 const savedView = localStorage.getItem(VIEW_STORAGE_KEY);
-if (savedView === 'list') {
-  root.classList.add('is-list-view');
+if (['list', 'menu'].includes(savedView)) {
+  root.dataset.view = savedView;
+  root.classList.toggle('is-list-view', savedView === 'list');
+  root.classList.toggle('is-menu-view', savedView === 'menu');
   viewSwitcher?.querySelector('[data-view="grid"]')?.classList.remove('is-active');
   viewSwitcher?.querySelector('[data-view="grid"]')?.setAttribute('aria-pressed', 'false');
-  viewSwitcher?.querySelector('[data-view="list"]')?.classList.add('is-active');
-  viewSwitcher?.querySelector('[data-view="list"]')?.setAttribute('aria-pressed', 'true');
+  viewSwitcher?.querySelector(`[data-view="${savedView}"]`)?.classList.add('is-active');
+  viewSwitcher?.querySelector(`[data-view="${savedView}"]`)?.setAttribute('aria-pressed', 'true');
 }
 viewSwitcher?.querySelectorAll('[data-view]').forEach(button => {
   button.addEventListener('click', () => setView(button.dataset.view));
