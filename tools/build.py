@@ -1,7 +1,7 @@
 """Gera a versão estática minificada do portal em ``dist/``."""
 
 from pathlib import Path
-from shutil import copy2
+from shutil import copy2, copytree
 
 from rcssmin import cssmin
 from rjsmin import jsmin
@@ -25,6 +25,8 @@ def build() -> None:
     """Monta a árvore de publicação com HTML, CSS e JavaScript compactados."""
     minify_tree(ROOT / "css", DIST / "css", cssmin)
     minify_tree(ROOT / "js", DIST / "js", jsmin)
+    if (ROOT / "assets").exists():
+        copytree(ROOT / "assets", DIST / "assets", dirs_exist_ok=True)
 
     html = (ROOT / "html" / "index.html").read_text(encoding="utf-8")
     html = html.replace("../css/", "css/").replace("../js/", "js/")

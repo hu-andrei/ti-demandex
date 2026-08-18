@@ -361,9 +361,9 @@ export function animateDecorations(root) {
     [
       ".team-icon--rpa svg",
       [
-        { transform: "translateY(0)" },
-        { transform: "translateY(-1.8px) rotate(-1.5deg)" },
-        { transform: "translateY(0)" },
+        { transform: "rotate(0deg) scale(1)" },
+        { transform: "rotate(-1.5deg) scale(1.035)" },
+        { transform: "rotate(0deg) scale(1)" },
       ],
       3000,
     ],
@@ -407,7 +407,7 @@ export function animateDecorations(root) {
   // Cada SVG possui partes independentes; estas animações devolvem o movimento
   // característico de cada equipe após a separação do módulo.
   const iconFrames = {
-    supportGrip: [{ transform: "translate(0, 0)" }, { offset: .78, transform: "translate(-.6px, .6px)" }, { offset: .88, transform: "translate(.5px, -.5px)" }, { transform: "translate(0, 0)" }],
+    supportGrip: [{ transform: "scale(1)" }, { offset: .78, transform: "scale(.97)" }, { offset: .88, transform: "scale(1.02)" }, { transform: "scale(1)" }],
     biLine: [{ strokeDashoffset: 30, opacity: .35 }, { offset: .48, strokeDashoffset: 0, opacity: 1 }, { offset: .78, strokeDashoffset: 0, opacity: 1 }, { strokeDashoffset: -30, opacity: .35 }],
     devSlash: [{ transform: "rotate(0deg) scale(.92)", opacity: .72 }, { offset: .5, transform: "rotate(7deg) scale(1.08)", opacity: 1 }, { transform: "rotate(0deg) scale(.92)", opacity: .72 }],
     rpaFace: [{ opacity: 1 }, { offset: .47, opacity: .18 }, { offset: .49, opacity: 1 }, { transform: "none", opacity: 1 }],

@@ -203,9 +203,8 @@ function restoreViewPreference() {
 /**
  * Trata a seleção de uma nova visualização do portal.
  *
- * Valida o valor vindo de `data-view`, impede mudanças redundantes ou concorrentes,
- * persiste a escolha e coordena uma animação de saída/entrada antes de liberar
- * novas interações.
+ * Valida o valor vindo de `data-view`, impede mudanças redundantes e coordena
+ * a transição de saída e entrada entre os layouts.
  *
  * @param {MouseEvent} event Evento de clique disparado por um botão de visualização.
  * @returns {void}
@@ -225,21 +224,10 @@ function handleViewButtonClick(event) {
   localStorage.setItem(storageKeys.view, selected);
   root.classList.add("is-view-transitioning");
 
-  /**
-   * Confirma a nova visualização após a animação de saída.
-   *
-   * @returns {void}
-   */
-  function commitViewChange() {
+  const commitViewChange = () => {
     applyViewState(selected);
 
-    /**
-     * Executa a animação de entrada da nova visualização no próximo frame.
-     *
-     * @private
-     * @returns {void}
-     */
-    function animateViewEntry() {
+    requestAnimationFrame(() => {
       animate(
         root,
         [
@@ -249,10 +237,8 @@ function handleViewButtonClick(event) {
         { duration: 360, easing: "cubic-bezier(.16, 1, .3, 1)" },
       );
       root.classList.remove("is-view-transitioning");
-    }
-
-    requestAnimationFrame(animateViewEntry);
-  }
+    });
+  };
 
   const exit = animate(
     root,
@@ -262,7 +248,7 @@ function handleViewButtonClick(event) {
     ],
     { duration: 150, easing: "ease-in" },
   );
-  if (exit) exit.finished.then(commitViewChange);
+  if (exit) exit.finished.then(commitViewChange, commitViewChange);
   else commitViewChange();
 }
 

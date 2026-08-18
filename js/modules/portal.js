@@ -110,10 +110,7 @@ function templateGroupsMarkup(team) {
     }
 
     const templates = team.templates.filter(belongsToCategory);
-    const title =
-      categories.length > 1
-        ? `<h3 class="template-group__title">${category}</h3>`
-        : "";
+    const title = `<h3 class="template-group__title">${category}</h3>`;
     return `<section class="template-group">${title}<div class="template-group__cards">${templates.map(renderTemplate).join("")}</div></section>`;
   }
 
@@ -187,7 +184,7 @@ export function createPortal(defaultHeading) {
    * @returns {string} Markup completo do cartão de equipe.
    */
   function renderTeamCard(team, cardIndex) {
-    return `<article class="team-card" data-team="${team.id}" style="--team-color:${team.color};--card-order:${cardIndex}"><button class="team-toggle" type="button" aria-expanded="false" aria-controls="panel-${team.id}"><span class="team-topline"><span class="team-icon team-icon--${team.id}">${team.icon}</span><span class="template-count">${team.templates.length} ${team.templates.length === 1 ? "template disponível" : "templates disponíveis"}</span><span class="team-emoji" aria-hidden="true">${team.emoji}</span></span><span class="team-copy"><h2>${team.name}</h2><p>${team.description}</p></span>${popularMarkup(team)}<span class="team-action">Selecionar equipe <i aria-hidden="true">→</i></span></button><div id="panel-${team.id}" class="team-panel" aria-hidden="true"><div class="team-panel-inner"><div class="template-grid">${templateGroupsMarkup(team)}</div></div></div></article>`;
+    return `<article class="team-card" data-team="${team.id}" style="--team-color:${team.color};--card-order:${cardIndex}"><button class="team-toggle" type="button" aria-expanded="false" aria-controls="panel-${team.id}"><span class="team-topline"><span class="team-icon team-icon--${team.id}">${team.icon}</span><span class="team-index" aria-hidden="true">${String(cardIndex + 1).padStart(2, "0")}</span><span class="template-count">${team.templates.length} ${team.templates.length === 1 ? "template disponível" : "templates disponíveis"}</span><span class="team-emoji" aria-hidden="true">${team.emoji}</span></span><span class="team-copy"><h2>${team.name}</h2><p>${team.description}</p></span>${popularMarkup(team)}<span class="team-action">Selecionar equipe <i aria-hidden="true">→</i></span></button><div id="panel-${team.id}" class="team-panel" aria-hidden="true"><div class="team-panel-inner"><div class="template-grid">${templateGroupsMarkup(team)}</div></div></div></article>`;
   }
 
   /**
@@ -301,12 +298,10 @@ export function createPortal(defaultHeading) {
   }
 
   /**
-   * Alterna a equipe aberta e executa a transição entre estados.
+   * Alterna a equipe aberta de forma imediata.
    *
    * Se a equipe informada já estiver aberta, a visão geral passa a ser o próximo
-   * estado. Interações concorrentes são ignoradas enquanto `root` contém a classe
-   * `is-transitioning`. Após a troca, os cartões de template da nova equipe entram
-   * em sequência com atraso progressivo.
+   * estado. A atualização não cria animações nos cards, inclusive no modo lista.
    *
    * @param {string} id Identificador da equipe a abrir ou fechar.
    * @returns {void}
@@ -318,61 +313,39 @@ export function createPortal(defaultHeading) {
     root.classList.add("is-transitioning");
     const nextTeam = openTeam === id ? null : id;
 
-    /**
-     * Anima individualmente um cartão de template da equipe recém-aberta.
-     *
-     * @private
-     * @param {Element} card Cartão de template.
-     * @param {number} index Índice usado para escalonar o atraso da entrada.
-     * @returns {void}
-     */
-    function animateTemplateCard(card, index) {
-      animate(card, [{ opacity: 0 }, { opacity: 1 }], {
-        duration: 460,
-        delay: 90 + index * 42,
-        easing: "cubic-bezier(.16, 1, .3, 1)",
-      });
-    }
-
-    /**
-     * Executa as animações de entrada após a aplicação do novo estado.
-     *
-     * @private
-     * @returns {void}
-     */
-    function animateNextState() {
-      animate(root, [{ opacity: 0 }, { opacity: 1 }], {
-        duration: 420,
-        easing: "cubic-bezier(.16, 1, .3, 1)",
-      });
-
-      if (nextTeam) {
-        root
-          .querySelector(`[data-team="${nextTeam}"] .team-panel`)
-          .querySelectorAll(".template-card")
-          .forEach(animateTemplateCard);
-      }
-      root.classList.remove("is-transitioning");
-    }
-
-    /**
-     * Confirma a troca de equipe após a animação de saída.
-     *
-     * @private
-     * @returns {void}
-     */
-    function commitTeamChange() {
+    const commit = () => {
       openTeam = nextTeam;
       applyState();
-      requestAnimationFrame(animateNextState);
-    }
+
+      requestAnimationFrame(() => {
+        animate(root, [{ opacity: 0 }, { opacity: 1 }], {
+          duration: 420,
+          easing: "cubic-bezier(.16, 1, .3, 1)",
+        });
+
+        if (nextTeam) {
+          root
+            .querySelector(`[data-team="${nextTeam}"] .team-panel`)
+            .querySelectorAll(".template-card")
+            .forEach((card, index) => {
+              animate(card, [{ opacity: 0 }, { opacity: 1 }], {
+                duration: 460,
+                delay: 90 + index * 42,
+                easing: "cubic-bezier(.16, 1, .3, 1)",
+              });
+            });
+        }
+
+        root.classList.remove("is-transitioning");
+      });
+    };
 
     const exit = animate(root, [{ opacity: 1 }, { opacity: 0 }], {
       duration: 150,
       easing: "ease-in",
     });
-    if (exit) exit.finished.then(commitTeamChange);
-    else commitTeamChange();
+    if (exit) exit.finished.then(commit, commit);
+    else commit();
   }
 
   /**
