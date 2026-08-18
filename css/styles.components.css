@@ -93,7 +93,7 @@
 .portal-heading span {
   display: block;
   color: var(--color-heading);
-  font: 600 clamp(9px, 1.05vh, 11px) 'Space Grotesk';
+  font: 700 clamp(9px, 1.05vh, 11px) 'Space Grotesk';
   letter-spacing: .19em;
   line-height: 1.2;
 }
@@ -133,6 +133,13 @@
   transition: color .3s ease;
 }
 
+.portal-heading__logo {
+  display: block;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+}
+
 .portal-heading.is-team-heading .portal-heading__title {
   color: var(--team-color, var(--color-heading));
 }
@@ -152,7 +159,7 @@
 .portal-heading__icon,
 .portal-heading>div:nth-child(2) {
   min-height: 38px;
-  will-change: opacity, transform;
+  will-change: opacity;
 }
 
 .portal-heading__team-actions {
@@ -811,17 +818,50 @@ html[data-font="source-sans"] {
   --font-ui: 'Source Sans 3', sans-serif;
 }
 
-.palette-option[data-palette="kanagawa"] i { --swatch-a: #7e9cd8; --swatch-b: #dca561; }
-.palette-option[data-palette="ayu"] i { --swatch-a: #ffcc66; --swatch-b: #bae67e; }
-.palette-option[data-palette="material-ocean"] i { --swatch-a: #82aaff; --swatch-b: #c792ea; }
-.palette-option[data-palette="synthwave"] i { --swatch-a: #ff7edb; --swatch-b: #36f9f6; }
-.palette-option[data-palette="cobalt"] i { --swatch-a: #00b4d8; --swatch-b: #ffd166; }
+.palette-option[data-palette="kanagawa"] i {
+  --swatch-a: #7e9cd8;
+  --swatch-b: #dca561;
+}
 
-html[data-font="sora"] { --font-ui: 'Sora', sans-serif; }
-html[data-font="rubik"] { --font-ui: 'Rubik', sans-serif; }
-html[data-font="work-sans"] { --font-ui: 'Work Sans', sans-serif; }
-html[data-font="nunito-sans"] { --font-ui: 'Nunito Sans', sans-serif; }
-html[data-font="jetbrains-mono"] { --font-ui: 'JetBrains Mono', monospace; }
+.palette-option[data-palette="ayu"] i {
+  --swatch-a: #ffcc66;
+  --swatch-b: #bae67e;
+}
+
+.palette-option[data-palette="material-ocean"] i {
+  --swatch-a: #82aaff;
+  --swatch-b: #c792ea;
+}
+
+.palette-option[data-palette="synthwave"] i {
+  --swatch-a: #ff7edb;
+  --swatch-b: #36f9f6;
+}
+
+.palette-option[data-palette="cobalt"] i {
+  --swatch-a: #00b4d8;
+  --swatch-b: #ffd166;
+}
+
+html[data-font="sora"] {
+  --font-ui: 'Sora', sans-serif;
+}
+
+html[data-font="rubik"] {
+  --font-ui: 'Rubik', sans-serif;
+}
+
+html[data-font="work-sans"] {
+  --font-ui: 'Work Sans', sans-serif;
+}
+
+html[data-font="nunito-sans"] {
+  --font-ui: 'Nunito Sans', sans-serif;
+}
+
+html[data-font="jetbrains-mono"] {
+  --font-ui: 'JetBrains Mono', monospace;
+}
 
 html[data-font] body,
 html[data-font] body * {
@@ -862,40 +902,40 @@ html[data-card-texture="mist"] .team-card::before {
 
 html[data-card-texture="grain"] .team-card::before {
   opacity: .35;
-  background-image: repeating-radial-gradient(circle at 0 0, rgba(255, 255, 255, .09) 0 1px, transparent 1px 3px);
-  background-size: 5px 5px;
+  background-image: repeating-radial-gradient(circle at 0 0, rgba(255, 255, 255, .09) 0 1px, transparent 1px 5px);
+  background-size: 9px 9px;
   mix-blend-mode: soft-light;
 }
 
 html[data-card-texture="aurora"] .team-card::before {
-  opacity: .7;
+  opacity: 1;
   background: radial-gradient(ellipse at 12% 5%, color-mix(in srgb, var(--team-color) 18%, transparent), transparent 42%), radial-gradient(ellipse at 88% 95%, color-mix(in srgb, var(--color-active) 12%, transparent), transparent 46%);
 }
 
 html[data-card-texture="paper"] .team-card::before {
-  opacity: .3;
-  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 4px);
+  opacity: 1;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, .08) 0 1px, transparent 1px 8px);
   mix-blend-mode: soft-light;
 }
 
 html[data-card-texture="lines"] .team-card::before {
-  opacity: .42;
+  opacity: .25;
   background: repeating-linear-gradient(135deg, transparent 0 10px, color-mix(in srgb, var(--team-color) 7%, transparent) 10px 11px, transparent 11px 21px);
 }
 
 html[data-card-texture="glow"] .team-card::before {
-  opacity: .68;
+  opacity: .75;
   background: radial-gradient(circle at 74% 20%, color-mix(in srgb, var(--color-active) 13%, transparent), transparent 24%), radial-gradient(circle at 16% 88%, color-mix(in srgb, var(--team-color) 12%, transparent), transparent 34%);
 }
 
 html[data-card-texture="waves"] .team-card::before {
-  opacity: .38;
-  background: repeating-radial-gradient(ellipse at 110% 120%, transparent 0 15px, color-mix(in srgb, var(--team-color) 10%, transparent) 16px 17px, transparent 18px 29px);
+  opacity: .185;
+  background: repeating-radial-gradient(ellipse at 110% 120%, transparent 0 15px, color-mix(in srgb, var(--team-color) 10%, transparent) 16px 17px, transparent 18px 10px);
 }
 
 html[data-card-texture="topography"] .team-card::before {
-  opacity: .34;
-  background: repeating-radial-gradient(ellipse at 18% 22%, transparent 0 12px, color-mix(in srgb, var(--team-color) 10%, transparent) 13px 14px, transparent 15px 25px);
+  opacity: .18;
+  background: repeating-radial-gradient(ellipse at 18% 22%, transparent 0 12px, color-mix(in srgb, var(--team-color) 10%, transparent) 13px 14px, transparent 15px 7px);
 }
 
 .settings-panel__footer {
@@ -993,14 +1033,87 @@ body.is-settings-page {
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
   color: color-mix(in srgb, var(--color-active) 75%, var(--text));
-  background-image:
-    linear-gradient(160deg, color-mix(in srgb, var(--color-brand) 18%, transparent), var(--surface-card)),
-    url('../assets/images/equipe.png');
+  background-image: linear-gradient(160deg, color-mix(in srgb, var(--color-brand) 18%, transparent), var(--surface-card));
   background-repeat: no-repeat;
   background-position: center, center clamp(24px, 5vh, 68px);
   background-size: cover, min(86%, 330px) auto;
   font: 700 clamp(18px, 2.4vw, 34px)/.94 'Space Grotesk';
   letter-spacing: -.06em;
+}
+
+html[data-card-texture="hive"] .team-card::before {
+  opacity: .12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='62.4' viewBox='0 0 72 62.4'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.3' stroke-width='1'%3E%3Cpath d='M6 0h12l6 10.4-6 10.4H6L0 10.4zM24 10.4h12l6 10.4-6 10.4H24l-6-10.4zM42 0h12l6 10.4-6 10.4H42l-6-10.4zM60 10.4h12l6 10.4-6 10.4H60l-6-10.4zM6 20.8h12l6 10.4-6 10.4H6L0 31.2zM24 31.2h12l6 10.4-6 10.4H24l-6-10.4zM42 20.8h12l6 10.4-6 10.4H42l-6-10.4zM60 31.2h12l6 10.4-6 10.4H60l-6-10.4zM6 41.6h12l6 10.4-6 10.4H6L0 52zM24 52h12l6 10.4-6 10.4H24l-6-10.4zM42 41.6h12l6 10.4-6 10.4H42l-6-10.4zM60 52h12l6 10.4-6 10.4H60l-6-10.4z'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: center;
+  background-size: 72px 62.4px;
+}
+
+html[data-card-texture="sci-fi"] .team-card::before {
+  opacity: .15;
+  background-image: linear-gradient(90deg, color-mix(in srgb, var(--team-color) 16%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--color-active) 12%, transparent) 1px, transparent 1px), radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--color-active) 24%, transparent), transparent 26%);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+html[data-card-texture="circuit"] .team-card::before {
+  opacity: .085;
+  background-image: linear-gradient(90deg, transparent 48%, color-mix(in srgb, var(--team-color) 18%, transparent) 49% 51%, transparent 52%), linear-gradient(0deg, transparent 48%, color-mix(in srgb, var(--team-color) 13%, transparent) 49% 51%, transparent 52%);
+  background-size: 46px 46px;
+}
+
+html[data-card-texture="mesh"] .team-card::before {
+  opacity: .12;
+  background-image: linear-gradient(45deg, transparent 48%, color-mix(in srgb, var(--team-color) 12%, transparent) 49% 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, color-mix(in srgb, var(--color-active) 10%, transparent) 49% 51%, transparent 52%);
+  background-size: 34px 34px;
+}
+
+html[data-card-texture="starlight"] .team-card::before {
+  opacity: .15;
+  background-image: radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--color-active) 65%, transparent) 0 1px, transparent 2px), radial-gradient(circle at 72% 38%, color-mix(in srgb, var(--team-color) 55%, transparent) 0 1px, transparent 2px), radial-gradient(circle at 48% 76%, rgba(255, 255, 255, .38) 0 1px, transparent 2px);
+  background-size: 52px 52px, 71px 71px, 97px 97px;
+}
+
+.team-context-tabs {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-card);
+}
+
+.team-context-tabs[hidden] {
+  display: none;
+}
+
+.team-context-tab {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 12px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font: 700 10px 'Space Grotesk';
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.team-context-tab.is-active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--team-color, var(--color-active)) 20%, transparent);
+}
+
+.template-grid[hidden] {
+  display: none !important;
+}
+
+html.has-menu-illustration .bento-grid.is-menu-view::before {
+  background-image:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-brand) 18%, transparent), var(--surface-card)),
+    url('../assets/images/equipe.png');
 }
 
 .bento-grid.is-menu-view .team-card {
@@ -2698,7 +2811,11 @@ html.has-card-tilt .team-card.is-open .template-grid {
   font-size: clamp(10px, 1.15vh, 12px);
 }
 
-@property --card-border-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --card-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
 
 /* A própria superfície do card desenha a borda: não há elemento transformado
    que possa se deslocar quando o card recebe hover ou inclinação 3D. */

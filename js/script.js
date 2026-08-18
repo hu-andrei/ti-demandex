@@ -32,6 +32,24 @@ import {
 } from "./modules/preferences.js";
 
 const portal = createPortal(defaultPortalHeading);
+let menuIllustrationRequested = false;
+
+function loadMenuIllustration() {
+  if (menuIllustrationRequested) return;
+  menuIllustrationRequested = true;
+
+  const illustration = new Image();
+  illustration.decoding = "async";
+  illustration.addEventListener(
+    "load",
+    () => document.documentElement.classList.add("has-menu-illustration"),
+    { once: true },
+  );
+  illustration.src = new URL(
+    "../assets/images/equipe.png",
+    import.meta.url,
+  ).href;
+}
 
 /**
  * Preenche o seletor de equipe do perfil com as equipes cadastradas no portal.
@@ -167,6 +185,7 @@ function restoreAppearancePreferences() {
  * @returns {void}
  */
 function applyViewState(selected) {
+  if (selected === "menu") loadMenuIllustration();
   root.dataset.view = selected;
   root.classList.toggle("is-list-view", selected === "list");
   root.classList.toggle("is-menu-view", selected === "menu");
@@ -293,7 +312,8 @@ function getVersionPath() {
 async function loadProductVersion() {
   try {
     const response = await fetch(getVersionPath());
-    if (!response.ok) throw new Error(`Falha ao carregar VERSION: ${response.status}`);
+    if (!response.ok)
+      throw new Error(`Falha ao carregar VERSION: ${response.status}`);
     const version = await response.text();
     if (productVersion) productVersion.textContent = `v${version.trim()}`;
   } catch {
@@ -325,6 +345,9 @@ function initialize() {
   restoreViewPreference();
   setupViewSwitcher();
   void loadProductVersion();
+  requestAnimationFrame(() =>
+    document.documentElement.classList.remove("app-loading"),
+  );
 }
 
 initialize();

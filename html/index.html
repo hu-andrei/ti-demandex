@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="app-loading">
 
 <head>
   <meta charset="utf-8" />
@@ -11,35 +11,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=block"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <style id="remove-first-load-flicker">
-    /* Impede o primeiro frame com a fonte de reserva antes das fontes da interface. */
-    html.fonts-loading body {
+    /* Evita pintar o markup intermediário enquanto o portal é montado. */
+    html.app-loading .portal-shell {
       visibility: hidden;
-    }
-
-    html.fonts-loading .portal-shell {
-      opacity: 0;
-    }
-
-    /* Os cards não podem iniciar enquanto a interface ainda está oculta. */
-    html.fonts-loading .team-card,
-    html.fonts-ready .team-card {
-      opacity: 0;
-      transform: translate3d(0, 18px, 0) scale(.985);
-      animation: none !important;
-    }
-
-    html.fonts-ready .portal-shell {
-      opacity: 1;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html.fonts-ready .team-card {
-        opacity: 1;
-        animation: none;
-      }
     }
   </style>
   <link rel="stylesheet" href="../css/styles.css" />
@@ -53,10 +30,16 @@
   <main class="portal-shell">
     <section class="portal" aria-label="Seleção de equipe e template de demanda">
       <div class="portal-heading">
-        <div class="brand-mark portal-heading__icon" aria-hidden="true">TI</div>
+        <div class="brand-mark portal-heading__icon" aria-hidden="true">
+          <img class="portal-heading__logo" src="../assets/images/Logo.png" alt="" decoding="async" fetchpriority="high" />
+        </div>
         <div>
-          <span class="portal-heading__title">PORTAL DE DEMANDAS</span>
+          <span class="portal-heading__title">DEMANDex</span>
           <p class="portal-heading__description">Selecione uma equipe para visualizar os formulários disponíveis.</p>
+        </div>
+        <div class="team-context-tabs" role="tablist" aria-label="Contexto da equipe" hidden>
+          <button class="team-context-tab is-active" type="button" role="tab" aria-selected="true" data-team-context="team">Equipe</button>
+          <button class="team-context-tab" type="button" role="tab" aria-selected="false" data-team-context="quality">Qualidade</button>
         </div>
         <div class="portal-heading__team-actions" hidden>
           <a class="portal-heading__project" href="#" target="_blank" rel="noreferrer"
@@ -231,6 +214,11 @@
                     <option value="glow">Brilho difuso</option>
                     <option value="waves">Ondas suaves</option>
                     <option value="topography">Topografia</option>
+                    <option value="hive">Hive</option>
+                    <option value="sci-fi">Sci-fi</option>
+                    <option value="circuit">Circuito</option>
+                    <option value="mesh">Malha</option>
+                    <option value="starlight">Luz estelar</option>
                   </select></label>
                 <label class="settings-switch"><span><strong>Hover 3D nos cards</strong><small>Inclina os cards conforme
                       a posição do cursor.</small></span><input id="settings-card-tilt" name="card-tilt" type="checkbox"

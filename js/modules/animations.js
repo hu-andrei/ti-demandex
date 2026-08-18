@@ -19,8 +19,8 @@ import {
 
 let activeAnimations = [];
 let ambientAnimations = [];
-let headerTransitionFrame = null;
 let headerAnimations = [];
+const defaultHeadingIconMarkup = portalHeadingIcon?.innerHTML || "TI";
 
 /**
  * Cancela uma instância da Web Animations API.
@@ -43,9 +43,6 @@ function cancelAnimationInstance(animation) {
  * @param {Animation} animation Instância da animação.
  * @returns {Promise<Animation>} Promise resolvida quando a animação termina.
  */
-function getAnimationFinishedPromise(animation) {
-  return animation.finished;
-}
 
 /**
  * Ignora intencionalmente o cancelamento de uma cadeia de animações.
@@ -57,7 +54,6 @@ function getAnimationFinishedPromise(animation) {
  * @private
  * @returns {void}
  */
-function ignoreAnimationCancellation() {}
 
 /**
  * Executa uma animação controlada pela aplicação em um elemento.
@@ -212,7 +208,7 @@ export function updatePortalHeading(
     if (portalHeadingDescription)
       portalHeadingDescription.textContent = description;
     if (portalHeadingIcon) {
-      portalHeadingIcon.innerHTML = team?.icon || "TI";
+      portalHeadingIcon.innerHTML = team?.icon || defaultHeadingIconMarkup;
       portalHeadingIcon.style.setProperty(
         "--team-color",
         team?.color || "#cbd8fa",
@@ -229,13 +225,9 @@ export function updatePortalHeading(
   }
 
   headerAnimations.forEach(cancelAnimationInstance);
-  if (headerTransitionFrame) cancelAnimationFrame(headerTransitionFrame);
+  commitHeadingContent();
 
-  const parts = [
-    portalHeadingIcon,
-    portalHeadingTitle,
-    portalHeadingDescription,
-  ].filter(Boolean);
+  const parts = [portalHeadingTitle, portalHeadingDescription].filter(Boolean);
 
   /**
    * Cria a animação de saída de uma parte do cabeçalho.
@@ -244,16 +236,6 @@ export function updatePortalHeading(
    * @param {Element} element Parte do cabeçalho que será ocultada.
    * @returns {Animation} Instância da animação de saída.
    */
-  function createHeaderExitAnimation(element) {
-    return element.animate(
-      [
-        { opacity: 1, transform: "scale(1)" },
-        { opacity: 0, transform: "scale(.985)" },
-      ],
-      { duration: 150, easing: "ease-in", fill: "both" },
-    );
-  }
-
   /**
    * Cria a animação de entrada de uma parte do cabeçalho.
    *
@@ -261,37 +243,20 @@ export function updatePortalHeading(
    * @param {Element} element Parte do cabeçalho que reaparecerá.
    * @returns {Animation} Instância da animação de entrada.
    */
-  function createHeaderEntryAnimation(element) {
-    return element.animate(
-      [
-        { opacity: 0, transform: "scale(.985)" },
-        { opacity: 1, transform: "scale(1)" },
-      ],
-      {
-        duration: 360,
-        delay: 20,
-        easing: "cubic-bezier(.16, 1, .3, 1)",
-        fill: "both",
-      },
-    );
-  }
-
   /**
    * Confirma o novo conteúdo e inicia a animação de entrada do cabeçalho.
    *
    * @private
    * @returns {void}
    */
-  function enterUpdatedHeader() {
-    commitHeadingContent();
-    headerAnimations = parts.map(createHeaderEntryAnimation);
-  }
-
-  const exitAnimations = parts.map(createHeaderExitAnimation);
-  headerAnimations = exitAnimations;
-  Promise.all(exitAnimations.map(getAnimationFinishedPromise))
-    .then(enterUpdatedHeader)
-    .catch(ignoreAnimationCancellation);
+  headerAnimations = parts.map((element, index) =>
+    element.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: 280,
+      delay: 70 + index * 45,
+      easing: "cubic-bezier(.16, 1, .3, 1)",
+      fill: "backwards",
+    }),
+  );
 }
 
 /**
@@ -407,15 +372,63 @@ export function animateDecorations(root) {
   // Cada SVG possui partes independentes; estas animações devolvem o movimento
   // característico de cada equipe após a separação do módulo.
   const iconFrames = {
-    supportGrip: [{ transform: "scale(1)" }, { offset: .78, transform: "scale(.97)" }, { offset: .88, transform: "scale(1.02)" }, { transform: "scale(1)" }],
-    biLine: [{ strokeDashoffset: 30, opacity: .35 }, { offset: .48, strokeDashoffset: 0, opacity: 1 }, { offset: .78, strokeDashoffset: 0, opacity: 1 }, { strokeDashoffset: -30, opacity: .35 }],
-    devSlash: [{ transform: "rotate(0deg) scale(.92)", opacity: .72 }, { offset: .5, transform: "rotate(7deg) scale(1.08)", opacity: 1 }, { transform: "rotate(0deg) scale(.92)", opacity: .72 }],
-    rpaFace: [{ opacity: 1 }, { offset: .47, opacity: .18 }, { offset: .49, opacity: 1 }, { transform: "none", opacity: 1 }],
+    supportGrip: [
+      { transform: "scale(1)" },
+      { offset: 0.78, transform: "scale(.97)" },
+      { offset: 0.88, transform: "scale(1.02)" },
+      { transform: "scale(1)" },
+    ],
+    biLine: [
+      { strokeDashoffset: 30, opacity: 0.35 },
+      { offset: 0.48, strokeDashoffset: 0, opacity: 1 },
+      { offset: 0.78, strokeDashoffset: 0, opacity: 1 },
+      { strokeDashoffset: -30, opacity: 0.35 },
+    ],
+    devSlash: [
+      { transform: "rotate(0deg) scale(.92)", opacity: 0.72 },
+      { offset: 0.5, transform: "rotate(7deg) scale(1.08)", opacity: 1 },
+      { transform: "rotate(0deg) scale(.92)", opacity: 0.72 },
+    ],
+    rpaFace: [
+      { opacity: 1 },
+      { offset: 0.47, opacity: 0.18 },
+      { offset: 0.49, opacity: 1 },
+      { transform: "none", opacity: 1 },
+    ],
   };
-  root.querySelectorAll(".team-icon--suporte svg path:first-child").forEach((element) => animateLoop(element, iconFrames.supportGrip, { duration: 3200, easing: "ease-in-out" }));
-  root.querySelectorAll(".team-icon--bi svg path:last-child").forEach((element) => { element.style.strokeDasharray = 30; animateLoop(element, iconFrames.biLine, { duration: 2700, easing: "ease-in-out" }); });
-  root.querySelectorAll(".team-icon--dev svg path:last-child").forEach((element) => animateLoop(element, iconFrames.devSlash, { duration: 2600, easing: "ease-in-out" }));
-  root.querySelectorAll(".team-icon--rpa svg path:nth-child(2)").forEach((element) => animateLoop(element, iconFrames.rpaFace, { duration: 3000, easing: "steps(1, end)" }));
+  root
+    .querySelectorAll(".team-icon--suporte svg path:first-child")
+    .forEach((element) =>
+      animateLoop(element, iconFrames.supportGrip, {
+        duration: 3200,
+        easing: "ease-in-out",
+      }),
+    );
+  root
+    .querySelectorAll(".team-icon--bi svg path:last-child")
+    .forEach((element) => {
+      element.style.strokeDasharray = 30;
+      animateLoop(element, iconFrames.biLine, {
+        duration: 2700,
+        easing: "ease-in-out",
+      });
+    });
+  root
+    .querySelectorAll(".team-icon--dev svg path:last-child")
+    .forEach((element) =>
+      animateLoop(element, iconFrames.devSlash, {
+        duration: 2600,
+        easing: "ease-in-out",
+      }),
+    );
+  root
+    .querySelectorAll(".team-icon--rpa svg path:nth-child(2)")
+    .forEach((element) =>
+      animateLoop(element, iconFrames.rpaFace, {
+        duration: 3000,
+        easing: "steps(1, end)",
+      }),
+    );
 
   const portalIcon = document.querySelector(".portal-heading__icon svg");
   if (portalIcon)

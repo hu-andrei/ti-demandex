@@ -69,7 +69,9 @@ export const settingsFont = document.querySelector("#settings-font");
  * @type {HTMLInputElement|HTMLSelectElement|null}
  */
 export const settingsTexture = document.querySelector("#settings-texture");
-export const settingsCardBorder = document.querySelector("#settings-card-border");
+export const settingsCardBorder = document.querySelector(
+  "#settings-card-border",
+);
 export const settingsCardEmoji = document.querySelector("#settings-card-emoji");
 /**
  * Controle que habilita ou desabilita o efeito de inclinação 3D.
@@ -147,6 +149,7 @@ export const portalHeadingBack = document.querySelector(
 export const portalHeadingTeamActions = document.querySelector(
   ".portal-heading__team-actions",
 );
+export const teamContextTabs = document.querySelector(".team-context-tabs");
 /**
  * Link para a visão da equipe no GitHub Projects.
  *

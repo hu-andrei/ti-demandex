@@ -29,7 +29,11 @@ def build() -> None:
         copytree(ROOT / "assets", DIST / "assets", dirs_exist_ok=True)
 
     html = (ROOT / "html" / "index.html").read_text(encoding="utf-8")
-    html = html.replace("../css/", "css/").replace("../js/", "js/")
+    html = (
+        html.replace("../css/", "css/")
+        .replace("../js/", "js/")
+        .replace("../assets/", "assets/")
+    )
     (DIST / "index.html").write_text(html, encoding="utf-8")
     copy2(ROOT / "VERSION", DIST / "VERSION")
 

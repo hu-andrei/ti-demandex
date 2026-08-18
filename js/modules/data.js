@@ -36,6 +36,16 @@
  */
 export const ISSUE_BASE =
   "https://github.com/ti-hu-org/ti-demandas/issues/new?template=";
+export const QUALITY_PROJECT_URL =
+  "https://github.com/orgs/ti-hu-org/projects/19/views/5";
+export const qualityTemplates = [
+  [
+    "Solicitação de qualidade",
+    "Registre uma solicitação para a equipe de Qualidade.",
+    "https://github.com/ti-hu-org/ti-qualidade/issues/new?template=solicitacao_qualidade.yml",
+    "Qualidade",
+  ],
+];
 
 /**
  * Ícones SVG internos reutilizados pelos cartões de equipe.

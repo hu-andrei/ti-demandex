@@ -15,13 +15,19 @@
  * @property {function(): (string|null)} getOpenTeam Retorna o identificador da equipe atualmente aberta.
  */
 
-import { ISSUE_BASE, teams } from "./data.js";
+import {
+  ISSUE_BASE,
+  QUALITY_PROJECT_URL,
+  qualityTemplates,
+  teams,
+} from "./data.js";
 import {
   root,
   portalHeading,
   portalHeadingBack,
   portalHeadingProject,
   portalHeadingTeamActions,
+  teamContextTabs,
   settings,
   settingsToggle,
 } from "./dom.js";
@@ -159,6 +165,7 @@ function popularMarkup(team) {
  */
 export function createPortal(defaultHeading) {
   let openTeam = null;
+  let activeContext = "team";
 
   /**
    * Trata o clique no botão principal de um cartão de equipe.
@@ -184,7 +191,8 @@ export function createPortal(defaultHeading) {
    * @returns {string} Markup completo do cartão de equipe.
    */
   function renderTeamCard(team, cardIndex) {
-    return `<article class="team-card" data-team="${team.id}" style="--team-color:${team.color};--card-order:${cardIndex}"><button class="team-toggle" type="button" aria-expanded="false" aria-controls="panel-${team.id}"><span class="team-topline"><span class="team-icon team-icon--${team.id}">${team.icon}</span><span class="team-index" aria-hidden="true">${String(cardIndex + 1).padStart(2, "0")}</span><span class="template-count">${team.templates.length} ${team.templates.length === 1 ? "template disponível" : "templates disponíveis"}</span><span class="team-emoji" aria-hidden="true">${team.emoji}</span></span><span class="team-copy"><h2>${team.name}</h2><p>${team.description}</p></span>${popularMarkup(team)}<span class="team-action">Selecionar equipe <i aria-hidden="true">→</i></span></button><div id="panel-${team.id}" class="team-panel" aria-hidden="true"><div class="team-panel-inner"><div class="template-grid">${templateGroupsMarkup(team)}</div></div></div></article>`;
+    const quality = { ...team, templates: qualityTemplates };
+    return `<article class="team-card" data-team="${team.id}" style="--team-color:${team.color};--card-order:${cardIndex}"><button class="team-toggle" type="button" aria-expanded="false" aria-controls="panel-${team.id}"><span class="team-topline"><span class="team-icon team-icon--${team.id}">${team.icon}</span><span class="team-index" aria-hidden="true">${String(cardIndex + 1).padStart(2, "0")}</span><span class="template-count">${team.templates.length} ${team.templates.length === 1 ? "template disponível" : "templates disponíveis"}</span><span class="team-emoji" aria-hidden="true">${team.emoji}</span></span><span class="team-copy"><h2>${team.name}</h2><p>${team.description}</p></span>${popularMarkup(team)}<span class="team-action">Selecionar equipe <i aria-hidden="true">→</i></span></button><div id="panel-${team.id}" class="team-panel" aria-hidden="true"><div class="team-panel-inner"><div class="template-grid" data-template-context="team">${templateGroupsMarkup(team)}</div><div class="template-grid" data-template-context="quality" hidden>${templateGroupsMarkup(quality)}</div></div></div></article>`;
   }
 
   /**
@@ -209,6 +217,17 @@ export function createPortal(defaultHeading) {
   function mount() {
     root.innerHTML = teams.map(renderTeamCard).join("");
     root.querySelectorAll(".team-toggle").forEach(registerTeamToggleButton);
+    document.querySelectorAll("[data-team-context]").forEach((button) =>
+      button.addEventListener("click", () => {
+        const nextContext =
+          button.dataset.teamContext === "quality" ? "quality" : "team";
+        if (nextContext === activeContext) return;
+        const previousContext = activeContext;
+        activeContext = nextContext;
+        applyState(false, false);
+        animateContextChange(previousContext, nextContext);
+      }),
+    );
   }
 
   /**
@@ -220,7 +239,7 @@ export function createPortal(defaultHeading) {
    *
    * @returns {void}
    */
-  function applyState() {
+  function applyState(updateHeader = true, updateTemplates = true) {
     const hasOpenTeam = Boolean(openTeam);
 
     /**
@@ -251,15 +270,27 @@ export function createPortal(defaultHeading) {
     if (portalHeadingBack) portalHeadingBack.disabled = !hasOpenTeam;
     if (portalHeadingTeamActions)
       portalHeadingTeamActions.hidden = !hasOpenTeam;
+    if (teamContextTabs) teamContextTabs.hidden = !hasOpenTeam;
     if (portalHeadingProject && selectedTeam)
-      portalHeadingProject.href = selectedTeam.projectUrl;
+      portalHeadingProject.href =
+        activeContext === "quality"
+          ? QUALITY_PROJECT_URL
+          : selectedTeam.projectUrl;
 
-    updatePortalHeading(
-      selectedTeam,
-      defaultHeading,
-      hasOpenTeam || wasTeamHeading,
-    );
-    animateHeaderControls();
+    document.querySelectorAll("[data-team-context]").forEach((button) => {
+      const active = button.dataset.teamContext === activeContext;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+
+    if (updateHeader) {
+      updatePortalHeading(
+        selectedTeam,
+        defaultHeading,
+        hasOpenTeam || wasTeamHeading,
+      );
+      animateHeaderControls();
+    }
 
     /**
      * Sincroniza acessibilidade e aparência de um cartão com o estado aberto.
@@ -279,6 +310,10 @@ export function createPortal(defaultHeading) {
 
       const panel = card.querySelector(".team-panel");
       panel.setAttribute("aria-hidden", String(!isOpen));
+      if (updateTemplates)
+        card.querySelectorAll("[data-template-context]").forEach((grid) => {
+          grid.hidden = grid.dataset.templateContext !== activeContext;
+        });
 
       /**
        * Ajusta a navegabilidade de um link de template conforme o painel aberto.
@@ -297,6 +332,58 @@ export function createPortal(defaultHeading) {
     root.querySelectorAll(".team-card").forEach(syncTeamCard);
   }
 
+  function animateContextChange(previousContext, nextContext) {
+    const card = root.querySelector(`[data-team="${openTeam}"]`);
+    const previous = card?.querySelector(
+      `[data-template-context="${previousContext}"]`,
+    );
+    const next = card?.querySelector(
+      `[data-template-context="${nextContext}"]`,
+    );
+    if (!next) return;
+
+    const reveal = () => {
+      next.hidden = false;
+      animate(
+        next,
+        [
+          { opacity: 0, transform: "translateX(12px)" },
+          { opacity: 1, transform: "translateX(0)" },
+        ],
+        { duration: 280, easing: "cubic-bezier(.16, 1, .3, 1)" },
+      );
+    };
+
+    if (!previous) {
+      reveal();
+      return;
+    }
+
+    const exit = animate(
+      previous,
+      [
+        { opacity: 1, transform: "translateX(0)" },
+        { opacity: 0, transform: "translateX(-10px)" },
+      ],
+      { duration: 150, easing: "ease-in" },
+    );
+    if (exit)
+      exit.finished.then(
+        () => {
+          previous.hidden = true;
+          reveal();
+        },
+        () => {
+          previous.hidden = true;
+          reveal();
+        },
+      );
+    else {
+      previous.hidden = true;
+      reveal();
+    }
+  }
+
   /**
    * Alterna a equipe aberta de forma imediata.
    *
@@ -312,6 +399,7 @@ export function createPortal(defaultHeading) {
     cancelAnimations();
     root.classList.add("is-transitioning");
     const nextTeam = openTeam === id ? null : id;
+    activeContext = "team";
 
     const commit = () => {
       openTeam = nextTeam;

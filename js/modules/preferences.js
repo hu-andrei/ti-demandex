@@ -44,6 +44,7 @@ export const storageKeys = {
 
 let themeAnimation = null;
 let settingsAnimation = null;
+let settingsTabAnimation = null;
 let cardBorderAnimations = [];
 
 /**
@@ -66,7 +67,11 @@ const valid = {
     "one-dark",
     "rose-pine",
     "monokai",
-    "kanagawa", "ayu", "material-ocean", "synthwave", "cobalt",
+    "kanagawa",
+    "ayu",
+    "material-ocean",
+    "synthwave",
+    "cobalt",
   ],
   font: [
     "dm-sans",
@@ -78,7 +83,11 @@ const valid = {
     "ibm-plex",
     "fira-sans",
     "source-sans",
-    "sora", "rubik", "work-sans", "nunito-sans", "jetbrains-mono",
+    "sora",
+    "rubik",
+    "work-sans",
+    "nunito-sans",
+    "jetbrains-mono",
   ],
   texture: [
     "none",
@@ -90,6 +99,11 @@ const valid = {
     "glow",
     "waves",
     "topography",
+    "hive",
+    "sci-fi",
+    "circuit",
+    "mesh",
+    "starlight",
   ],
   border: ["none", "rgb", "team", "orbit", "pulse", "prism"],
   emoji: ["default", "android", "ios", "mac", "windows", "linux"],
@@ -282,31 +296,67 @@ function startCardBorderAnimations(border) {
   if (border === "none" || motion.matches) return;
 
   root.querySelectorAll(".team-card").forEach((card) => {
-    const teamColor = getComputedStyle(card).getPropertyValue("--team-color").trim();
-    const shadow = getComputedStyle(card).getPropertyValue("--shadow-card").trim();
+    const teamColor = getComputedStyle(card)
+      .getPropertyValue("--team-color")
+      .trim();
+    const shadow = getComputedStyle(card)
+      .getPropertyValue("--shadow-card")
+      .trim();
     let keyframes;
     let options;
 
     if (border === "rgb") {
-      keyframes = [{ backgroundPosition: "center, center, 0 0" }, { backgroundPosition: "center, center, 300% 0" }];
+      keyframes = [
+        { backgroundPosition: "center, center, 0 0" },
+        { backgroundPosition: "center, center, 300% 0" },
+      ];
       options = { duration: 4000, easing: "linear", iterations: Infinity };
     } else if (border === "team") {
-      keyframes = [{ backgroundPosition: "center, center, 0 0" }, { backgroundPosition: "center, center, 200% 0" }];
+      keyframes = [
+        { backgroundPosition: "center, center, 0 0" },
+        { backgroundPosition: "center, center, 200% 0" },
+      ];
       options = { duration: 3400, easing: "linear", iterations: Infinity };
     } else if (border === "pulse") {
       const softGlow = `color-mix(in srgb, ${teamColor} 22%, transparent)`;
       const strongGlow = `color-mix(in srgb, ${teamColor} 52%, transparent)`;
       keyframes = [
-        { boxShadow: `inset 0 1px rgba(255,255,255,.035), inset 0 0 0 1px ${softGlow}, inset 0 0 4px ${softGlow}, ${shadow}`, offset: 0 },
-        { boxShadow: `inset 0 1px rgba(255,255,255,.05), inset 0 0 0 1.25px ${strongGlow}, inset 0 0 9px ${softGlow}, ${shadow}`, offset: .3 },
-        { boxShadow: `inset 0 1px rgba(255,255,255,.07), inset 0 0 0 1.6px ${strongGlow}, inset 0 0 16px ${strongGlow}, ${shadow}`, offset: .5 },
-        { boxShadow: `inset 0 1px rgba(255,255,255,.05), inset 0 0 0 1.25px ${strongGlow}, inset 0 0 9px ${softGlow}, ${shadow}`, offset: .7 },
-        { boxShadow: `inset 0 1px rgba(255,255,255,.035), inset 0 0 0 1px ${softGlow}, inset 0 0 4px ${softGlow}, ${shadow}`, offset: 1 },
+        {
+          boxShadow: `inset 0 1px rgba(255,255,255,.035), inset 0 0 0 1px ${softGlow}, inset 0 0 4px ${softGlow}, ${shadow}`,
+          offset: 0,
+        },
+        {
+          boxShadow: `inset 0 1px rgba(255,255,255,.05), inset 0 0 0 1.25px ${strongGlow}, inset 0 0 9px ${softGlow}, ${shadow}`,
+          offset: 0.3,
+        },
+        {
+          boxShadow: `inset 0 1px rgba(255,255,255,.07), inset 0 0 0 1.6px ${strongGlow}, inset 0 0 16px ${strongGlow}, ${shadow}`,
+          offset: 0.5,
+        },
+        {
+          boxShadow: `inset 0 1px rgba(255,255,255,.05), inset 0 0 0 1.25px ${strongGlow}, inset 0 0 9px ${softGlow}, ${shadow}`,
+          offset: 0.7,
+        },
+        {
+          boxShadow: `inset 0 1px rgba(255,255,255,.035), inset 0 0 0 1px ${softGlow}, inset 0 0 4px ${softGlow}, ${shadow}`,
+          offset: 1,
+        },
       ];
-      options = { duration: 3000, easing: "cubic-bezier(.45, 0, .55, 1)", iterations: Infinity };
+      options = {
+        duration: 3000,
+        easing: "cubic-bezier(.45, 0, .55, 1)",
+        iterations: Infinity,
+      };
     } else {
-      keyframes = [{ "--card-border-angle": "0deg" }, { "--card-border-angle": "360deg" }];
-      options = { duration: border === "prism" ? 3100 : 3800, easing: "linear", iterations: Infinity };
+      keyframes = [
+        { "--card-border-angle": "0deg" },
+        { "--card-border-angle": "360deg" },
+      ];
+      options = {
+        duration: border === "prism" ? 3100 : 3800,
+        easing: "linear",
+        iterations: Infinity,
+      };
     }
 
     cardBorderAnimations.push(card.animate(keyframes, options));
@@ -314,7 +364,9 @@ function startCardBorderAnimations(border) {
 }
 
 motion.addEventListener?.("change", () => {
-  startCardBorderAnimations(document.documentElement.dataset.cardBorder || "none");
+  startCardBorderAnimations(
+    document.documentElement.dataset.cardBorder || "none",
+  );
 });
 
 export function setCardEmoji(emoji) {
@@ -338,10 +390,13 @@ export function setCardEmoji(emoji) {
       delete iconElement.dataset.defaultIcon;
     }
     if (emojiElement) {
-      if (!emojiElement.dataset.defaultEmoji) emojiElement.dataset.defaultEmoji = emojiElement.textContent;
-      emojiElement.textContent = selected === "default"
-        ? emojiElement.dataset.defaultEmoji
-        : platformEmojis[selected][card.dataset.team] || emojiElement.dataset.defaultEmoji;
+      if (!emojiElement.dataset.defaultEmoji)
+        emojiElement.dataset.defaultEmoji = emojiElement.textContent;
+      emojiElement.textContent =
+        selected === "default"
+          ? emojiElement.dataset.defaultEmoji
+          : platformEmojis[selected][card.dataset.team] ||
+            emojiElement.dataset.defaultEmoji;
     }
   });
 }
@@ -612,6 +667,11 @@ export function setupSettings(portal, defaultHeading) {
     const tab = event.currentTarget;
     const activeTab = tab.dataset.settingsTab;
     const next = document.querySelector(`#settings-${activeTab}`);
+    const current = document.querySelector(
+      '.settings-section[role="tabpanel"]:not([hidden])',
+    );
+
+    if (!next || next === current) return;
 
     /**
      * Sincroniza um botão de aba com a aba acionada.
@@ -631,14 +691,49 @@ export function setupSettings(portal, defaultHeading) {
      * @param {HTMLElement} panel Painel de configurações candidato.
      * @returns {void}
      */
-    function syncSettingsPanel(panel) {
-      panel.hidden = panel !== next;
+    document.querySelectorAll("[data-settings-tab]").forEach(syncCurrentTab);
+    settingsTabAnimation?.cancel();
+
+    function revealNextPanel() {
+      next.hidden = false;
+      if (motion.matches) return;
+
+      settingsTabAnimation = next.animate(
+        [
+          { opacity: 0, transform: "translateX(10px)" },
+          { opacity: 1, transform: "translateX(0)" },
+        ],
+        { duration: 280, easing: "cubic-bezier(.16, 1, .3, 1)" },
+      );
     }
 
-    document.querySelectorAll("[data-settings-tab]").forEach(syncCurrentTab);
-    document
-      .querySelectorAll('.settings-section[role="tabpanel"]')
-      .forEach(syncSettingsPanel);
+    if (!current) {
+      revealNextPanel();
+      return;
+    }
+
+    if (motion.matches) {
+      current.hidden = true;
+      revealNextPanel();
+      return;
+    }
+
+    const exit = current.animate(
+      [
+        { opacity: 1, transform: "translateX(0)" },
+        { opacity: 0, transform: "translateX(-8px)" },
+      ],
+      { duration: 150, easing: "ease-in" },
+    );
+    settingsTabAnimation = exit;
+    exit.finished.then(
+      () => {
+        if (settingsTabAnimation !== exit) return;
+        current.hidden = true;
+        revealNextPanel();
+      },
+      () => {},
+    );
   }
 
   /**
@@ -730,9 +825,7 @@ export function setupSettings(portal, defaultHeading) {
   paletteOptions.forEach(registerPaletteOption);
   settingsToggle?.addEventListener("click", handleSettingsToggle);
   settingsClose?.addEventListener("click", closeSettings);
-  document
-    .querySelectorAll("[data-settings-tab]")
-    .forEach(registerSettingsTab);
+  document.querySelectorAll("[data-settings-tab]").forEach(registerSettingsTab);
   settingsPanel?.addEventListener("click", handleSettingsBackdropClick);
   settingsPanel?.addEventListener("submit", handleProfileSubmit);
   document.addEventListener("click", handleDocumentClick);
