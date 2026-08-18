@@ -993,7 +993,12 @@ body.is-settings-page {
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
   color: color-mix(in srgb, var(--color-active) 75%, var(--text));
-  background: linear-gradient(160deg, color-mix(in srgb, var(--color-brand) 18%, transparent), var(--surface-card));
+  background-image:
+    linear-gradient(160deg, color-mix(in srgb, var(--color-brand) 18%, transparent), var(--surface-card)),
+    url('../assets/images/equipe.png');
+  background-repeat: no-repeat;
+  background-position: center, center clamp(24px, 5vh, 68px);
+  background-size: cover, min(86%, 330px) auto;
   font: 700 clamp(18px, 2.4vw, 34px)/.94 'Space Grotesk';
   letter-spacing: -.06em;
 }
@@ -1058,6 +1063,23 @@ body.is-settings-page {
   background-repeat: no-repeat;
 }
 
+.bento-grid.is-list-view .team-icon {
+  display: none;
+}
+
+.bento-grid.is-list-view .team-index {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--team-color) 50%, var(--line));
+  border-radius: 50%;
+  color: var(--team-color);
+  background: color-mix(in srgb, var(--team-color) 8%, transparent);
+  font: 700 12px/1 'Space Grotesk';
+  letter-spacing: .08em;
+}
+
 .bento-grid.is-list-view .team-toggle {
   height: auto;
 }
@@ -1090,10 +1112,6 @@ body.is-settings-page {
   grid-column: 1;
   grid-row: 2 / 4;
   align-self: center;
-}
-
-.bento-grid.is-list-view .popular-demands {
-  display: none !important;
 }
 
 .bento-grid.is-list-view .team-action {
@@ -1378,6 +1396,7 @@ html.has-card-tilt .template-card:hover {
 }
 
 .team-index {
+  display: none;
   color: color-mix(in srgb, var(--team-color) 65%, #fff);
   font: 600 clamp(9px, 1.1vh, 12px) 'Space Grotesk';
   letter-spacing: .12em;
@@ -1848,7 +1867,11 @@ html.has-card-tilt .template-card:hover {
   }
 
   .bento-grid.is-menu-view::before {
-    display: none;
+    display: flex;
+    grid-row: auto;
+    min-height: clamp(320px, 64vh, 620px);
+    background-position: center, center clamp(22px, 7vh, 56px);
+    background-size: cover, min(78%, 300px) auto;
   }
 
   .bento-grid.is-menu-view .team-card {
@@ -2426,6 +2449,9 @@ html.is-theme-transitioning .theme-toggle {
 }
 
 .team-card.is-open .template-card {
+  /* Fallback determinístico: os templates continuam visíveis mesmo se uma
+     animação for interrompida ou se o usuário reduzir movimentos. */
+  opacity: 1;
   animation: none;
 }
 
@@ -2711,4 +2737,66 @@ html[data-card-border="pulse"] .team-card {
 
 html[data-card-border="prism"] .team-card {
   background-image: radial-gradient(circle at 90% 5%, color-mix(in srgb, var(--team-color) 17%, transparent), transparent 38%), var(--card-inner), conic-gradient(from var(--card-border-angle), #ff4d8d, #ffd166, #38ef7d, #00c6ff, #8b5cf6, #ff4d8d);
+}
+
+/* Lista: o submenu não reutiliza o cabeçalho em três colunas do card resumido. */
+@media (min-width: 901px) {
+  .bento-grid.is-list-view .team-toggle::before {
+    display: none;
+  }
+
+  .bento-grid.is-list-view .team-icon {
+    display: none;
+  }
+
+  .bento-grid.is-list-view .team-index {
+    display: grid;
+    grid-column: 1;
+    grid-row: 1 / -1;
+    place-self: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid color-mix(in srgb, var(--team-color) 50%, var(--line));
+    border-radius: 50%;
+    color: var(--team-color);
+    background: color-mix(in srgb, var(--team-color) 8%, transparent);
+    font: 700 12px/1 'Space Grotesk';
+    letter-spacing: .08em;
+  }
+
+  .bento-grid.is-list-view .template-count {
+    transform: translateY(-16px);
+  }
+
+  .bento-grid.is-list-view .team-emoji {
+    right: clamp(110px, 8vw, 150px);
+  }
+
+  .bento-grid.is-list-view .team-copy,
+  .bento-grid.is-list-view .popular-demands,
+  .bento-grid.is-list-view .team-action,
+  .bento-grid.is-list-view .template-count {
+    padding-left: 0;
+  }
+
+  .bento-grid.is-list-view .team-card.is-open .popular-demands {
+    display: none !important;
+  }
+
+  /* Espaçador compacto do painel aberto em lista. */
+  .bento-grid.is-list-view .team-card.is-open .team-toggle {
+    display: block;
+    height: auto;
+    min-height: 0;
+    padding: clamp(12px, 1.4vw, 20px) clamp(20px, 2.25vw, 38px) 8px;
+  }
+
+  .bento-grid.is-list-view .team-card.is-open .team-panel {
+    grid-row: 2;
+  }
+
+  .bento-grid.is-list-view .team-card.is-open .template-grid {
+    padding-top: 0;
+  }
+
 }
