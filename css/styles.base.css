@@ -1,8 +1,19 @@
 ﻿/* Reset e elementos globais. */
 
-* { box-sizing: border-box; }
-html, body { width: 100%; min-height: 100%; }
-html { background: var(--bg); }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+html {
+  background: var(--bg);
+}
+
 body {
   margin: 0;
   color: var(--text);
@@ -10,6 +21,11 @@ body {
   font-family: 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-button { font: inherit; }
-a { color: inherit; }
 
+button {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}

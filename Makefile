@@ -5,13 +5,14 @@ HOST ?= 127.0.0.1
 PYTHON ?= python3
 PID_FILE := .server.pid
 
-.PHONY: help start stop restart clean
+.PHONY: help start stop restart build clean
 
 help:
 	@echo "Comandos disponíveis:"
 	@echo "  make start    Inicia o servidor local em http://$(HOST):$(PORT)/html/"
 	@echo "  make stop     Para o servidor local"
 	@echo "  make restart  Reinicia o servidor local"
+	@echo "  make build    Gera arquivos minificados em dist/"
 	@echo "  make help     Exibe esta ajuda"
 	@echo "  make clean    Remove arquivos temporários"
 
@@ -35,6 +36,11 @@ stop:
 	fi
 
 restart: stop start
+
+build:
+	@echo "Gerando arquivos minificados em dist/..."
+	@$(PYTHON) tools/build.py
+	@echo "Build minificado gerado em dist/."
 
 clean:
 	@echo "Removendo arquivos temporários..."

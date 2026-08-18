@@ -27,18 +27,36 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Prepare site
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build minified site
         run: |
-          mkdir -p _site
-          cp html/index.html _site/index.html
-          sed -i 's#\.\./css/#css/#g; s#\.\./js/#js/#g' _site/index.html
-          cp -R css js _site/
-          cp VERSION _site/VERSION
+          python -m pip install --disable-pip-version-check rjsmin rcssmin
+          python tools/build.py
+
+      - name: Measure performance with Lighthouse
+        run: |
+          python -m http.server 4173 --directory dist > /tmp/portal-server.log 2>&1 &
+          npx --yes lighthouse@12 http://127.0.0.1:4173 --preset=desktop --only-categories=performance --output=json --output-path=lighthouse-report.json --chrome-flags="--headless --no-sandbox"
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: lighthouse-report.json
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment
