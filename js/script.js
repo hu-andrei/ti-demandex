@@ -13,12 +13,14 @@ import {
   portalHeadingBack,
   productVersion,
   profileNickname,
+  profileGithubLogin,
   profileTeam,
   root,
   viewSwitcher,
 } from "./modules/dom.js";
 import { animate, animateDecorations } from "./modules/animations.js";
 import { createPortal } from "./modules/portal.js";
+import { createMyDemands } from "./modules/my-demands.js";
 import {
   setCardBorder,
   setCardEmoji,
@@ -31,7 +33,73 @@ import {
   storageKeys,
 } from "./modules/preferences.js";
 
-const portal = createPortal(defaultPortalHeading);
+async function prefetchIssueTemplate(url) {
+  const sourceUrl = new URL(url);
+  const match = sourceUrl.pathname.match(/^\/([^/]+)\/([^/]+)\/issues\/new$/);
+  const template = sourceUrl.searchParams.get("template");
+  if (!match || !template) throw new Error("Template inválido");
+  const path = `.github/ISSUE_TEMPLATE/${template}`;
+  const config = window.DEMANDEX_CONFIG || {};
+  const apiBase = (config.githubApiBase || "https://api.github.com").replace(/\/$/, "");
+  const endpoint = config.githubProxyUrl
+    ? `${config.githubProxyUrl}?${new URLSearchParams({ owner: match[1], repository: match[2], path })}`
+    : `${apiBase}/repos/${match[1]}/${match[2]}/contents/.github/ISSUE_TEMPLATE/${encodeURIComponent(template)}`;
+  const response = await fetch(endpoint, { headers: { Accept: "application/vnd.github+json" } });
+  if (!response.ok) throw new Error(`Falha ao carregar template: ${response.status}`);
+  const payload = await response.json();
+  if (!payload.content) throw new Error("Template sem conteúdo");
+  const binary = atob(payload.content.replace(/\n/g, ""));
+  return new TextDecoder().decode(Uint8Array.from(binary, (character) => character.charCodeAt(0)));
+}
+
+async function openIssueFormPage({ url, title, teamId }) {
+  const destination = new URL("issue-form.html", window.location.href);
+  destination.searchParams.set("templateUrl", url);
+  destination.searchParams.set("title", title || "Formulário de demanda");
+  if (teamId) destination.searchParams.set("returnTeam", teamId);
+  let yaml = null;
+  try {
+    yaml = await prefetchIssueTemplate(url);
+    sessionStorage.setItem("demandex-prefetched-issue", JSON.stringify({ url, title, yaml }));
+  } catch {
+    sessionStorage.removeItem("demandex-prefetched-issue");
+  }
+  const cards = [...document.querySelectorAll("#teams .team-card")];
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reducedMotion || !cards.length) {
+    window.location.assign(destination.href);
+    return;
+  }
+  const animations = cards.map((card, index) => card.animate(
+    [
+      { opacity: 1, transform: "translateY(0) scale(1)" },
+      { opacity: 0, transform: "translateY(-12px) scale(.985)" },
+    ],
+    { duration: 360, delay: index * 35, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" },
+  ));
+  Promise.all(animations.map((animation) => animation.finished.catch(() => undefined)))
+    .then(() => window.location.assign(destination.href));
+}
+
+function animateCatalogReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("fromIssue")) return;
+  const returnTeam = params.get("team");
+  if (returnTeam && teams.some((team) => team.id === returnTeam)) {
+    portal.setOpenTeam(returnTeam);
+    portal.applyState();
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.animate(
+    [
+      { opacity: 0, transform: "translateY(10px)" },
+      { opacity: 1, transform: "translateY(0)" },
+    ],
+    { duration: 360, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" },
+  );
+}
+
+const portal = createPortal(defaultPortalHeading, openIssueFormPage);
 let menuIllustrationRequested = false;
 
 function loadMenuIllustration() {
@@ -114,6 +182,7 @@ function restoreProfile() {
   );
 
   if (profileNickname) profileNickname.value = savedProfile.nickname || "";
+  if (profileGithubLogin) profileGithubLogin.value = savedProfile.githubLogin || "";
   if (profileTeam)
     profileTeam.value = isKnownTeam(savedProfile.team) ? savedProfile.team : "";
 
@@ -332,6 +401,7 @@ async function loadProductVersion() {
  */
 function initialize() {
   portal.mount();
+  createMyDemands(portal);
   populateProfileTeams();
   restoreProfile();
   portal.applyState();
@@ -344,6 +414,7 @@ function initialize() {
   setupSettings(portal, defaultPortalHeading);
   restoreViewPreference();
   setupViewSwitcher();
+  animateCatalogReturn();
   void loadProductVersion();
   requestAnimationFrame(() =>
     document.documentElement.classList.remove("app-loading"),

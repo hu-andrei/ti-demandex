@@ -65,7 +65,7 @@ function getTemplateCategory(template) {
 function templateMarkup(template, index, color) {
   const [title, description, file] = template;
   const href = file.startsWith("http") ? file : `${ISSUE_BASE}${file}`;
-  return `<a class="template-card" href="${href}" target="_blank" rel="noreferrer" style="--team-color:${color};--template-order:${index}"><div><span class="template-number">TEMPLATE ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${description}</p></div><span class="template-arrow" aria-hidden="true">↗</span></a>`;
+  return `<a class="template-card" href="${href}" target="_blank" rel="noreferrer" data-template-url="${href}" data-template-title="${title}" style="--team-color:${color};--template-order:${index}"><div><span class="template-number">TEMPLATE ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${description}</p></div><span class="template-arrow" aria-hidden="true">↗</span></a>`;
 }
 
 /**
@@ -163,7 +163,7 @@ function popularMarkup(team) {
  * @param {{title: string, description: string}} defaultHeading Cabeçalho usado na visão geral do portal.
  * @returns {PortalController} API de controle do portal.
  */
-export function createPortal(defaultHeading) {
+export function createPortal(defaultHeading, openIssueForm) {
   let openTeam = null;
   let activeContext = "team";
 
@@ -217,6 +217,17 @@ export function createPortal(defaultHeading) {
   function mount() {
     root.innerHTML = teams.map(renderTeamCard).join("");
     root.querySelectorAll(".team-toggle").forEach(registerTeamToggleButton);
+    root.querySelectorAll(".template-card").forEach((card) =>
+      card.addEventListener("click", (event) => {
+        if (!openIssueForm) return;
+        event.preventDefault();
+        openIssueForm({
+          url: card.dataset.templateUrl,
+          title: card.dataset.templateTitle,
+          teamId: openTeam,
+        });
+      }),
+    );
     document.querySelectorAll("[data-team-context]").forEach((button) =>
       button.addEventListener("click", () => {
         const nextContext =
@@ -315,18 +326,9 @@ export function createPortal(defaultHeading) {
           grid.hidden = grid.dataset.templateContext !== activeContext;
         });
 
-      /**
-       * Ajusta a navegabilidade de um link de template conforme o painel aberto.
-       *
-       * @private
-       * @param {HTMLAnchorElement} link Link de template.
-       * @returns {void}
-       */
-      function syncTemplateLink(link) {
+      panel.querySelectorAll("a").forEach((link) => {
         link.tabIndex = isOpen ? 0 : -1;
-      }
-
-      panel.querySelectorAll("a").forEach(syncTemplateLink);
+      });
     }
 
     root.querySelectorAll(".team-card").forEach(syncTeamCard);

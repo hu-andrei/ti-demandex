@@ -12,6 +12,7 @@ import {
   motion,
   paletteOptions,
   profileNickname,
+  profileGithubLogin,
   profileTeam,
   root,
   settingsCardBorder,
@@ -756,6 +757,7 @@ export function setupSettings(portal, defaultHeading) {
     event.preventDefault();
     const profile = {
       nickname: profileNickname?.value.trim() || "",
+      githubLogin: profileGithubLogin?.value.trim().replace(/^@/, "") || "",
       team: profileTeam?.value || "",
     };
     localStorage.setItem(storageKeys.profile, JSON.stringify(profile));

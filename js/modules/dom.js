@@ -158,6 +158,7 @@ export const teamContextTabs = document.querySelector(".team-context-tabs");
 export const portalHeadingProject = document.querySelector(
   ".portal-heading__project",
 );
+export const profileGithubLogin = document.querySelector("#profile-github-login");
 /**
  * Snapshot do texto padrão do cabeçalho no momento da inicialização.
  *

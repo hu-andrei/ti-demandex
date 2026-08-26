@@ -2,10 +2,10 @@ SHELL := /bin/sh
 
 PORT ?= 8010
 HOST ?= 127.0.0.1
-PYTHON ?= python3
+NODE ?= node
 PID_FILE := .server.pid
 
-.PHONY: help start stop restart build clean
+.PHONY: help runtime-config start stop restart build clean
 
 help:
 	@echo "Comandos disponíveis:"
@@ -17,13 +17,18 @@ help:
 	@echo "  make clean    Remove arquivos temporários"
 
 start:
+	@$(MAKE) runtime-config
 	@if [ -f "$(PID_FILE)" ] && kill -0 "$$(cat "$(PID_FILE)")" 2>/dev/null; then \
 		echo "O servidor já está em execução (PID $$(cat "$(PID_FILE)")), em http://$(HOST):$(PORT)/html/"; \
 	else \
-		$(PYTHON) -m http.server $(PORT) --bind $(HOST) > .server.log 2>&1 & \
+		HOST=$(HOST) PORT=$(PORT) $(NODE) tools/server.mjs > .server.log 2>&1 & \
 		echo $$! > "$(PID_FILE)"; \
 		echo "Servidor iniciado em http://$(HOST):$(PORT)/html/"; \
 	fi
+
+runtime-config:
+	@$(NODE) tools/runtime-config.mjs
+	@echo "Configuração de runtime gerada a partir do .env."
 
 stop:
 	@if [ -f "$(PID_FILE)" ]; then \
@@ -39,7 +44,7 @@ restart: stop start
 
 build:
 	@echo "Gerando arquivos minificados em dist/..."
-	@$(PYTHON) tools/build.py
+	@$(NODE) tools/build.mjs
 	@echo "Build minificado gerado em dist/."
 
 clean:

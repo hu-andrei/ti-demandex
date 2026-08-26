@@ -37,6 +37,10 @@
           <span class="portal-heading__title">DEMANDex</span>
           <p class="portal-heading__description">Selecione uma equipe para visualizar os formulários disponíveis.</p>
         </div>
+        <div class="portal-workspace-tabs" role="tablist" aria-label="Área de trabalho">
+          <button class="portal-workspace-tab is-active" type="button" role="tab" aria-selected="true" data-workspace="new">Nova Demanda</button>
+          <button class="portal-workspace-tab" type="button" role="tab" aria-selected="false" data-workspace="mine">Minhas Demandas</button>
+        </div>
         <div class="team-context-tabs" role="tablist" aria-label="Contexto da equipe" hidden>
           <button class="team-context-tab is-active" type="button" role="tab" aria-selected="true" data-team-context="team">Equipe</button>
           <button class="team-context-tab" type="button" role="tab" aria-selected="false" data-team-context="quality">Qualidade</button>
@@ -78,6 +82,11 @@
             </svg>
           </button>
         </div>
+        <label class="demands-search" id="demands-search" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
+          <input id="demands-search-input" type="search" autocomplete="off" placeholder="Buscar demandas" aria-label="Buscar demandas" />
+          <kbd>Ctrl K</kbd>
+        </label>
         <button class="theme-toggle" type="button" aria-label="Ativar modo claro" aria-pressed="false"
           title="Ativar modo claro" hidden>
           <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true">
@@ -125,6 +134,8 @@
                 <p>Perfil</p>
                 <label>Seu apelido<input id="profile-nickname" name="nickname" type="text" maxlength="28"
                     autocomplete="nickname" placeholder="Como quer ser chamado?"></label>
+                <label>Usuário do GitHub<input id="profile-github-login" name="githubLogin" type="text" maxlength="39"
+                    autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ex.: andrei-costa"></label>
                 <label>Sua equipe<select id="profile-team" name="team">
                     <option value="">Nenhuma equipe padrão</option>
                   </select></label>
@@ -254,9 +265,19 @@
       </div>
 
       <div id="teams" class="bento-grid" aria-live="polite"></div>
+      <section class="my-demands" id="my-demands" hidden aria-label="Minhas demandas">
+        <aside class="my-demands__list" aria-label="Lista de demandas">
+          <div class="my-demands__list-header"><div><span>ACOMPANHAMENTO</span><h2>Minhas demandas</h2></div><output class="my-demands__count" id="my-demands-count"></output></div>
+          <div class="my-demands__filters" role="group" aria-label="Filtrar demandas"><button class="is-active" type="button" data-demand-filter="all">Todas</button><button type="button" data-demand-filter="parent">Parents</button><button type="button" data-demand-filter="subissue">Sub-issues</button></div>
+          <div class="my-demands__items" id="my-demands-items"></div>
+          <div class="my-demands__pagination" id="my-demands-pagination" aria-label="Paginação das demandas"></div>
+        </aside>
+        <article class="my-demands__detail" id="my-demands-detail" aria-live="polite"></article>
+      </section>
     </section>
   </main>
 
+  <script src="../runtime-config.js"></script>
   <script type="module" src="../js/script.js"></script>
 </body>
 

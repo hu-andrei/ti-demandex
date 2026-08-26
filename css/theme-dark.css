@@ -155,8 +155,72 @@ html[data-palette="monokai"] {
   --card-open-background: linear-gradient(145deg, #3e3d32, #272822);
 }
 
-html[data-palette="kanagawa"] { --bg:#1f1f28; --text:#dcd7ba; --muted:#a6a69c; --color-brand:#7e9cd8; --color-heading:#dcd7ba; --color-active:#dca561; --line:rgba(220,215,186,.13); --line-strong:rgba(220,215,186,.22); --surface-card:rgba(220,215,186,.045); --card-background:linear-gradient(145deg,#2a2a37,#1f1f28); --card-open-background:linear-gradient(145deg,#363646,#1f1f28); }
-html[data-palette="ayu"] { --bg:#1f2430; --text:#cccac2; --muted:#8c99a5; --color-brand:#ffcc66; --color-heading:#f0eee4; --color-active:#bae67e; --line:rgba(204,202,194,.13); --line-strong:rgba(204,202,194,.22); --surface-card:rgba(204,202,194,.045); --card-background:linear-gradient(145deg,#292f3e,#1f2430); --card-open-background:linear-gradient(145deg,#323a4c,#1f2430); }
-html[data-palette="material-ocean"] { --bg:#0f111a; --text:#8f93a2; --muted:#717582; --color-brand:#82aaff; --color-heading:#c5c8d4; --color-active:#c792ea; --line:rgba(197,200,212,.13); --line-strong:rgba(197,200,212,.22); --surface-card:rgba(197,200,212,.045); --card-background:linear-gradient(145deg,#191b26,#0f111a); --card-open-background:linear-gradient(145deg,#222432,#0f111a); }
-html[data-palette="synthwave"] { --bg:#241b3b; --text:#f3e9ff; --muted:#b7a7d4; --color-brand:#ff7edb; --color-heading:#fff1ff; --color-active:#36f9f6; --line:rgba(243,233,255,.15); --line-strong:rgba(243,233,255,.24); --surface-card:rgba(243,233,255,.05); --card-background:linear-gradient(145deg,#342652,#241b3b); --card-open-background:linear-gradient(145deg,#49336d,#241b3b); }
-html[data-palette="cobalt"] { --bg:#001b33; --text:#e8f4ff; --muted:#9fc1dc; --color-brand:#00b4d8; --color-heading:#f0f8ff; --color-active:#ffd166; --line:rgba(232,244,255,.14); --line-strong:rgba(232,244,255,.24); --surface-card:rgba(232,244,255,.045); --card-background:linear-gradient(145deg,#062744,#001b33); --card-open-background:linear-gradient(145deg,#0a3459,#001b33); }
+html[data-palette="kanagawa"] {
+  --bg: #1f1f28;
+  --text: #dcd7ba;
+  --muted: #a6a69c;
+  --color-brand: #7e9cd8;
+  --color-heading: #dcd7ba;
+  --color-active: #dca561;
+  --line: rgba(220, 215, 186, .13);
+  --line-strong: rgba(220, 215, 186, .22);
+  --surface-card: rgba(220, 215, 186, .045);
+  --card-background: linear-gradient(145deg, #2a2a37, #1f1f28);
+  --card-open-background: linear-gradient(145deg, #363646, #1f1f28);
+}
+
+html[data-palette="ayu"] {
+  --bg: #1f2430;
+  --text: #cccac2;
+  --muted: #8c99a5;
+  --color-brand: #ffcc66;
+  --color-heading: #f0eee4;
+  --color-active: #bae67e;
+  --line: rgba(204, 202, 194, .13);
+  --line-strong: rgba(204, 202, 194, .22);
+  --surface-card: rgba(204, 202, 194, .045);
+  --card-background: linear-gradient(145deg, #292f3e, #1f2430);
+  --card-open-background: linear-gradient(145deg, #323a4c, #1f2430);
+}
+
+html[data-palette="material-ocean"] {
+  --bg: #0f111a;
+  --text: #8f93a2;
+  --muted: #717582;
+  --color-brand: #82aaff;
+  --color-heading: #c5c8d4;
+  --color-active: #c792ea;
+  --line: rgba(197, 200, 212, .13);
+  --line-strong: rgba(197, 200, 212, .22);
+  --surface-card: rgba(197, 200, 212, .045);
+  --card-background: linear-gradient(145deg, #191b26, #0f111a);
+  --card-open-background: linear-gradient(145deg, #222432, #0f111a);
+}
+
+html[data-palette="synthwave"] {
+  --bg: #241b3b;
+  --text: #f3e9ff;
+  --muted: #b7a7d4;
+  --color-brand: #ff7edb;
+  --color-heading: #fff1ff;
+  --color-active: #36f9f6;
+  --line: rgba(243, 233, 255, .15);
+  --line-strong: rgba(243, 233, 255, .24);
+  --surface-card: rgba(243, 233, 255, .05);
+  --card-background: linear-gradient(145deg, #342652, #241b3b);
+  --card-open-background: linear-gradient(145deg, #49336d, #241b3b);
+}
+
+html[data-palette="cobalt"] {
+  --bg: #001b33;
+  --text: #e8f4ff;
+  --muted: #9fc1dc;
+  --color-brand: #00b4d8;
+  --color-heading: #f0f8ff;
+  --color-active: #ffd166;
+  --line: rgba(232, 244, 255, .14);
+  --line-strong: rgba(232, 244, 255, .24);
+  --surface-card: rgba(232, 244, 255, .045);
+  --card-background: linear-gradient(145deg, #062744, #001b33);
+  --card-open-background: linear-gradient(145deg, #0a3459, #001b33);
+}

@@ -271,8 +271,8 @@
 }
 
 .view-switcher__button.is-active {
-  color: var(--color-active);
-  background: color-mix(in srgb, var(--color-active) 16%, transparent);
+  color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 18%, transparent);
 }
 
 .view-switcher__button svg {
