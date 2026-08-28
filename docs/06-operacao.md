@@ -25,6 +25,12 @@ O DEMANDex é estático. Não existe processo de backend a monitorar em produç�
 5. gere o build;
 6. publique via pipeline.
 
+Para uma subtarefa, mantenha a categoria `Sub-issues` e confira se o YAML está associado à equipe correta.
+
+### Alterar favoritos ou badges “Mais utilizadas”
+
+Não há configuração de servidor para esse recurso. Os favoritos são definidos pelo usuário no navegador e persistidos no `localStorage`; para restaurar os badges padrão de uma equipe, remova todos os favoritos daquela equipe.
+
 ### Alterar Project de uma equipe
 
 1. obtenha a URL oficial da view desejada;
@@ -97,6 +103,10 @@ Ação:
 - confirmar presença de `VERSION`;
 - confirmar presença de `dist/VERSION` após build;
 - verificar o caminho de carregamento no ambiente publicado.
+
+### Busca rápida não abre ou não encontra um template
+
+Verifique se `js/modules/command.js` está sendo carregado, se o atalho `Ctrl+K` não está sendo capturado pelo navegador e se o template está presente em `js/modules/data.js`.
 
 ## 6. Mudanças de configuração
 

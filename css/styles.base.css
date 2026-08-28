@@ -26,6 +26,13 @@ button {
   font: inherit;
 }
 
+/* Cliques de mouse não deixam o botão visualmente preso em foco; a indicação
+   continua disponível para navegação por teclado através de :focus-visible. */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
 a {
   color: inherit;
 }

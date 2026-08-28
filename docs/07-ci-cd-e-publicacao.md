@@ -102,6 +102,8 @@ lighthouse-report
 
 A publicação usa `actions/deploy-pages@v4`.
 
+Como as etapas são sequenciais, uma falha no build, no Lighthouse ou no envio do artefato impede a execução do deploy. O conteúdo publicado é exclusivamente o diretório `dist/` produzido por `tools/build.py` dentro do workflow.
+
 ## 6. Configuração inicial do repositório
 
 No GitHub:
@@ -122,6 +124,7 @@ Após uma publicação bem-sucedida:
 - testar o acesso ao Project de cada equipe;
 - testar Qualidade;
 - testar configurações;
+- testar busca rápida e favoritos;
 - revisar o relatório Lighthouse;
 - verificar console do navegador.
 

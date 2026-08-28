@@ -96,7 +96,20 @@ Recarregue a página.
 - confirmar existência das regras CSS correspondentes;
 - limpar a preferência persistida e testar novamente.
 
-## 10. Lighthouse falha no workflow
+## 10. Favoritos ou badges “Mais utilizadas” não atualizam
+
+- confirme que o template foi favoritado dentro do contexto da equipe;
+- verifique a chave `ti-demandas-favorite-templates` no `localStorage`;
+- confirme que o YAML do template está cadastrado em `js/modules/data.js` para a equipe correta;
+- remova a chave de favoritos e teste novamente se o estado estiver inconsistente.
+
+## 11. Busca rápida não abre
+
+- teste `Ctrl+K` ou `⌘K` fora de campos de texto;
+- verifique erros no console relacionados a `command.js`;
+- confirme que `#command-toggle` e `#command-palette` existem em `html/index.html`.
+
+## 12. Lighthouse falha no workflow
 
 Verifique:
 
@@ -106,7 +119,7 @@ Verifique:
 - instalação/execução do `lighthouse@12`;
 - erros de carregamento que impeçam a página de estabilizar.
 
-## 11. Deploy do Pages falha
+## 13. Deploy do Pages falha
 
 Confirme:
 

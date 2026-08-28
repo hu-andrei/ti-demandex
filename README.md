@@ -2,6 +2,8 @@
 
 O **DEMANDex** é um portal web estático interno que centraliza o acesso aos fluxos de abertura de demandas de Tecnologia no GitHub. A aplicação organiza os formulários por equipe, apresenta atalhos para os respectivos GitHub Projects e oferece um contexto específico para demandas de Qualidade.
 
+Versão atual: **0.2.0**.
+
 ## Objetivo
 
 Reduzir a necessidade de o usuário conhecer previamente qual repositório, formulário ou quadro deve utilizar. O DEMANDex funciona como uma camada de descoberta e direcionamento; o registro e o gerenciamento das demandas continuam sendo realizados no GitHub Issues e no GitHub Projects.
@@ -24,10 +26,12 @@ Entre os recursos disponíveis estão:
 - links para GitHub Projects;
 - visualizações em grade, lista e menu;
 - perfil local com apelido e equipe padrão;
-- 16 paletas visuais;
+- 20 paletas visuais;
 - 14 famílias tipográficas;
-- texturas, bordas animadas e emojis configuráveis;
+- backgrounds estáticos, texturas, bordas animadas e emojis configuráveis;
 - hover 3D opcional nos cards;
+- busca rápida com `Ctrl+K`;
+- favoritos por equipe, refletidos nos badges “Mais utilizadas”;
 - persistência de preferências no `localStorage`;
 - suporte a `prefers-reduced-motion`;
 - build estático minificado;
@@ -61,6 +65,7 @@ Entre os recursos disponíveis estão:
 │   ├── script.js
 │   └── modules/
 │       ├── animations.js
+│       ├── command.js
 │       ├── data.js
 │       ├── dom.js
 │       ├── portal.js
@@ -72,6 +77,8 @@ Entre os recursos disponíveis estão:
 ```
 
 O diretório `dist/` é produzido pelo processo de build e representa a versão pronta para publicação.
+
+Os estilos de background ficam em `css/theme-backgrounds.css`; opções animadas não fazem parte da interface atual.
 
 ## Execução local
 

@@ -38,6 +38,29 @@ import {
   updatePortalHeading,
 } from "./animations.js";
 
+const FAVORITES_KEY = "ti-demandas-favorite-templates";
+
+function getTemplateUrl(file) {
+  return file.startsWith("http") ? file : `${ISSUE_BASE}${file}`;
+}
+
+function readFavoriteUrls() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]");
+    return new Set(
+      Array.isArray(stored)
+        ? stored.filter((url) => typeof url === "string")
+        : [],
+    );
+  } catch {
+    return new Set();
+  }
+}
+
+function saveFavoriteUrls(urls) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...urls]));
+}
+
 /**
  * Obtém a categoria de um template, usando `Geral` como fallback.
  *
@@ -62,10 +85,11 @@ function getTemplateCategory(template) {
  * @param {string} color Cor de destaque da equipe em formato CSS válido.
  * @returns {string} Fragmento HTML do link/cartão do template.
  */
-function templateMarkup(template, index, color) {
+function templateMarkup(template, index, color, favorites) {
   const [title, description, file] = template;
-  const href = file.startsWith("http") ? file : `${ISSUE_BASE}${file}`;
-  return `<a class="template-card" href="${href}" target="_blank" rel="noreferrer" style="--team-color:${color};--template-order:${index}"><div><span class="template-number">TEMPLATE ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${description}</p></div><span class="template-arrow" aria-hidden="true">↗</span></a>`;
+  const href = getTemplateUrl(file);
+  const favorite = favorites.has(href);
+  return `<a class="template-card" href="${href}" target="_blank" rel="noreferrer" style="--team-color:${color};--template-order:${index}" data-template-url="${href}"><div><span class="template-number">TEMPLATE ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${description}</p></div><span class="template-favorite${favorite ? " is-favorite" : ""}" role="button" tabindex="0" aria-label="${favorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}" aria-pressed="${favorite}" data-template-favorite data-template-url="${href}">★</span><span class="template-arrow" aria-hidden="true">↗</span></a>`;
 }
 
 /**
@@ -80,6 +104,7 @@ function templateMarkup(template, index, color) {
  * @returns {string} Markup HTML de todas as seções de templates da equipe.
  */
 function templateGroupsMarkup(team) {
+  const favorites = readFavoriteUrls();
   const categories = [...new Set(team.templates.map(getTemplateCategory))];
   let index = 0;
 
@@ -110,7 +135,7 @@ function templateGroupsMarkup(team) {
      * @returns {string} Markup do cartão renderizado.
      */
     function renderTemplate(template) {
-      const markup = templateMarkup(template, index, team.color);
+      const markup = templateMarkup(template, index, team.color, favorites);
       index += 1;
       return markup;
     }
@@ -126,16 +151,30 @@ function templateGroupsMarkup(team) {
 /**
  * Gera a faixa de demandas mais utilizadas exibida no cartão de uma equipe.
  *
- * A equipe de Suporte destaca os dois primeiros templates; as demais equipes
- * destacam apenas o primeiro. A seleção é posicional e depende da ordem definida
- * em `teams`.
+ * Quando não há favoritos, a equipe de Suporte destaca Telefonia e Solicitação
+ * geral; as demais equipes destacam o primeiro template disponível. Essa regra
+ * preserva os badges padrão mesmo quando a ordem visual das categorias muda.
  *
  * @private
  * @param {Team} team Equipe usada para selecionar os templates em destaque.
  * @returns {string} Markup HTML da faixa de demandas populares.
  */
-function popularMarkup(team) {
-  const popular = team.templates.slice(0, team.id === "suporte" ? 2 : 1);
+function getPopularTemplates(team, favorites = readFavoriteUrls()) {
+  const favoriteTemplates = team.templates.filter((template) =>
+    favorites.has(getTemplateUrl(template[2])),
+  );
+  if (favoriteTemplates.length) return favoriteTemplates;
+  if (team.id !== "suporte") return team.templates.slice(0, 1);
+
+  return team.templates.filter((template) =>
+    ["30-telefonia.yml", "01-suporte-solicitacao-geral.yml"].some((file) =>
+      getTemplateUrl(template[2]).endsWith(`template=${file}`),
+    ),
+  );
+}
+
+function popularMarkup(team, favorites = readFavoriteUrls()) {
+  const popular = getPopularTemplates(team, favorites);
 
   /**
    * Renderiza o rótulo compacto de uma demanda popular.
@@ -145,8 +184,9 @@ function popularMarkup(team) {
    * @returns {string} Markup do rótulo da demanda.
    */
   function renderPopularDemand(template) {
-    const [title] = template;
-    return `<span class="popular-demand">${title}</span>`;
+    const [title, , file] = template;
+    const href = getTemplateUrl(file);
+    return `<span class="popular-demand" role="link" tabindex="0" title="Abrir ${title}" data-popular-url="${href}">${title}</span>`;
   }
 
   return `<div class="popular-demands" aria-label="Demandas mais utilizadas"><span class="popular-demands__label">Mais utilizadas</span><div class="popular-demands__items">${popular.map(renderPopularDemand).join("")}</div></div>`;
@@ -206,6 +246,74 @@ export function createPortal(defaultHeading) {
     button.addEventListener("click", handleTeamToggleClick);
   }
 
+  function openIssue(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function registerPopularDemand(element) {
+    const open = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openIssue(element.dataset.popularUrl);
+    };
+    element.addEventListener("click", open);
+    element.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") open(event);
+    });
+  }
+
+  function updateTeamPopularDemands(teamId) {
+    const team = teams.find((item) => item.id === teamId);
+    const card = root.querySelector(`.team-card[data-team="${teamId}"]`);
+    const items = card?.querySelector(".popular-demands__items");
+    if (!team || !items) return;
+
+    const favorites = readFavoriteUrls();
+    const popular = getPopularTemplates(team, favorites);
+    items.innerHTML = popular
+      .map(([title, , file]) => {
+        const href = getTemplateUrl(file);
+        return `<span class="popular-demand" role="link" tabindex="0" title="Abrir ${title}" data-popular-url="${href}">${title}</span>`;
+      })
+      .join("");
+    items.querySelectorAll("[data-popular-url]").forEach(registerPopularDemand);
+  }
+
+  function registerFavoriteControl(element) {
+    const toggleFavorite = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const url = element.dataset.templateUrl;
+      const favorites = readFavoriteUrls();
+      const isFavorite = favorites.has(url);
+      if (isFavorite) favorites.delete(url);
+      else favorites.add(url);
+      saveFavoriteUrls(favorites);
+      element.classList.toggle("is-favorite", !isFavorite);
+      element.setAttribute("aria-pressed", String(!isFavorite));
+      element.setAttribute(
+        "aria-label",
+        isFavorite ? "Adicionar aos favoritos" : "Remover dos favoritos",
+      );
+      const teamCard = element.closest(".team-card");
+      const isTeamTemplate = element.closest('[data-template-context="team"]');
+      if (teamCard && isTeamTemplate) {
+        updateTeamPopularDemands(teamCard.dataset.team);
+      }
+    };
+    element.addEventListener("click", toggleFavorite);
+    element.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") toggleFavorite(event);
+    });
+  }
+
+  function registerTemplateActions() {
+    root.querySelectorAll("[data-popular-url]").forEach(registerPopularDemand);
+    root
+      .querySelectorAll("[data-template-favorite]")
+      .forEach(registerFavoriteControl);
+  }
+
   /**
    * Renderiza os cartões de equipe e registra o clique de abertura/fechamento.
    *
@@ -217,6 +325,7 @@ export function createPortal(defaultHeading) {
   function mount() {
     root.innerHTML = teams.map(renderTeamCard).join("");
     root.querySelectorAll(".team-toggle").forEach(registerTeamToggleButton);
+    registerTemplateActions();
     document.querySelectorAll("[data-team-context]").forEach((button) =>
       button.addEventListener("click", () => {
         const nextContext =

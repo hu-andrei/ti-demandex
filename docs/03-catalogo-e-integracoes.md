@@ -113,6 +113,17 @@ https://github.com/ti-hu-org/ti-qualidade/issues/new?template=solicitacao_qualid
 5. Defina a categoria quando necessário.
 6. Teste o link gerado.
 
+### Sub-issues
+
+Os templates de subtarefa usam a categoria visual `Sub-issues`, separada dos fluxos principais. Na versão 0.2.0, ela é usada por:
+
+- `05-suporte-sub-issue.yml`;
+- `12-bi-sub-issue.yml`;
+- `22-dev-sub-issue.yml`;
+- `31-rpa-sub-issue.yml`.
+
+Mantenha essa categoria para novos formulários cuja finalidade seja criar uma subtarefa vinculada a uma demanda principal.
+
 ## 9. Boas práticas
 
 - não alterar `id` de equipe sem avaliar preferências já persistidas;
@@ -120,4 +131,5 @@ https://github.com/ti-hu-org/ti-qualidade/issues/new?template=solicitacao_qualid
 - manter títulos curtos e descritivos;
 - evitar duplicidade de templates;
 - manter categorias semanticamente consistentes;
+- usar `Sub-issues` para subtarefas e não misturá-las aos templates de demanda principal;
 - testar em ambiente autenticado com um usuário que possua as permissões reais de acesso.

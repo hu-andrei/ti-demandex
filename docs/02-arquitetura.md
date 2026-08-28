@@ -39,6 +39,7 @@ A camada visual é dividida em arquivos especializados:
 - `css/styles.animation.css`: animações e estados visuais;
 - `css/theme-dark.css`: tema escuro;
 - `css/theme-light.css`: tema claro;
+- `css/theme-backgrounds.css`: variações estáticas de background;
 - `css/styles.css`: agregação/entrada de estilos.
 
 ### JavaScript
@@ -56,7 +57,8 @@ Ponto de entrada responsável por:
 - restaurar visualização;
 - conectar controles globais;
 - carregar a versão do produto;
-- iniciar animações.
+- iniciar animações;
+- inicializar a busca rápida.
 
 #### `js/modules/data.js`
 
@@ -86,7 +88,12 @@ Responsável pelo estado e renderização funcional do portal:
 - contexto de equipe e Qualidade;
 - atualização do cabeçalho;
 - acessibilidade dos painéis;
-- controle de foco e visibilidade dos templates.
+- controle de foco e visibilidade dos templates;
+- persistência de favoritos e atualização dos badges de cada equipe.
+
+#### `js/modules/command.js`
+
+Implementa a busca rápida por equipes, templates e ações, com atalhos de teclado e itens recentes persistidos no navegador.
 
 #### `js/modules/preferences.js`
 
@@ -96,6 +103,8 @@ Responsável por:
 - paleta;
 - fonte;
 - textura;
+- tamanho da textura;
+- background estático;
 - borda;
 - emoji;
 - hover 3D;
@@ -115,6 +124,8 @@ Não existe store global externa. O estado é mantido por:
 - atributos `data-*` no DOM;
 - classes CSS;
 - `localStorage` para preferências persistentes.
+
+Também são persistidos localmente os favoritos de templates e os itens recentes da busca rápida.
 
 ## 4. Dependências de runtime
 

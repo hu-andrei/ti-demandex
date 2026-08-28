@@ -82,12 +82,6 @@ export const teams = [
       "Incidentes, acessos, equipamentos, infraestrutura e atendimento ao usuário.",
     templates: [
       [
-        "Telefonia | Solicitação ou ajuste",
-        "Solicitação de telefone, carregador ou equipamentos de comunicação.",
-        "https://github.com/ti-hu-org/ti-demandas/issues/new?template=30-telefonia.yml",
-        "Telefonia",
-      ],
-      [
         "Solicitação geral",
         "Incidentes, dúvidas, acessos, instalações, equipamentos ou serviços de TI.",
         "01-suporte-solicitacao-geral.yml",
@@ -106,6 +100,18 @@ export const teams = [
         "Registro diário",
         "Demandas e atividades realizadas pela equipe de Suporte durante a semana.",
         "04-suporte-registro-diario.yml",
+      ],
+      [
+        "Sub-issue de Suporte",
+        "Crie uma subtarefa vinculada a uma demanda principal de Suporte.",
+        "05-suporte-sub-issue.yml",
+        "Sub-issues",
+      ],
+      [
+        "Telefonia | Solicitação ou ajuste",
+        "Solicitação de telefone, carregador ou equipamentos de comunicação.",
+        "https://github.com/ti-hu-org/ti-demandas/issues/new?template=30-telefonia.yml",
+        "Telefonia",
       ],
     ],
   },
@@ -128,6 +134,12 @@ export const teams = [
         "KPI",
         "Criação, alteração, revisão ou validação de indicadores de desempenho.",
         "11-bi-kpi.yml",
+      ],
+      [
+        "Sub-issue de BI",
+        "Crie uma subtarefa vinculada a uma demanda principal de BI.",
+        "12-bi-sub-issue.yml",
+        "Sub-issues",
       ],
     ],
   },
@@ -153,6 +165,12 @@ export const teams = [
         "21-dev-setup-tecnico.yml",
         "Setup técnico",
       ],
+      [
+        "Sub-issue de Desenvolvimento",
+        "Crie uma subtarefa vinculada a uma demanda principal de Desenvolvimento.",
+        "22-dev-sub-issue.yml",
+        "Sub-issues",
+      ],
     ],
   },
   {
@@ -169,6 +187,12 @@ export const teams = [
         "Automação ou ajuste",
         "Automações de processos repetitivos, integrações operacionais ou ajustes em robôs.",
         "30-rpa-automacao-ajuste.yml",
+      ],
+      [
+        "Sub-issue de RPA",
+        "Crie uma subtarefa vinculada a uma demanda principal de RPA.",
+        "31-rpa-sub-issue.yml",
+        "Sub-issues",
       ],
     ],
   },

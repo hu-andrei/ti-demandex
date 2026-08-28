@@ -35,13 +35,14 @@ Também é possível acessar diretamente o GitHub Project associado ao contexto 
 
 Destinado a incidentes, acessos, equipamentos, infraestrutura, telefonia e atendimento ao usuário.
 
-Templates presentes no catálogo analisado:
+Templates presentes no catálogo analisado, organizados em **Geral**, **Sub-issues** e **Telefonia**:
 
-- Telefonia | Solicitação ou ajuste;
 - Solicitação geral;
 - Chamado SAT;
 - Acompanhamento diário SAT;
-- Registro diário.
+- Registro diário;
+- Sub-issue de Suporte.
+- Telefonia | Solicitação ou ajuste.
 
 ### Business Intelligence
 
@@ -50,7 +51,8 @@ Destinado a dashboards, relatórios, indicadores, análises e dados.
 Templates presentes:
 
 - Dashboard, relatório ou análise;
-- KPI.
+- KPI;
+- Sub-issue de BI.
 
 ### Desenvolvimento
 
@@ -59,15 +61,17 @@ Destinado a sistemas, APIs, integrações, funcionalidades e melhorias técnicas
 Templates presentes:
 
 - Funcionalidade, correção ou integração;
-- Setup técnico.
+- Setup técnico;
+- Sub-issue de Desenvolvimento.
 
 ### RPA
 
 Destinado a automações, robôs, rotinas operacionais e monitoramento de processos.
 
-Template presente:
+Templates presentes:
 
-- Automação ou ajuste.
+- Automação ou ajuste;
+- Sub-issue de RPA.
 
 ### Qualidade
 
@@ -105,7 +109,15 @@ O portal oferece configurações de aparência, incluindo:
 
 As preferências são locais ao navegador e não são sincronizadas com servidor.
 
-## 8. Limites funcionais
+Os backgrounds disponíveis são estáticos. As opções animadas foram removidas para manter uma experiência visual mais estável.
+
+## 8. Busca e favoritos
+
+A busca rápida pode ser aberta pelo botão **Buscar** ou por `Ctrl+K` (`⌘K` no macOS). Ela localiza equipes, templates e ações do portal.
+
+Cada template pode ser marcado como favorito. Os favoritos são persistidos localmente e substituem os badges “Mais utilizadas” apenas no card da equipe à qual pertencem. Sem favoritos naquela equipe, os badges padrão retornam.
+
+## 9. Limites funcionais
 
 O DEMANDex não executa:
 

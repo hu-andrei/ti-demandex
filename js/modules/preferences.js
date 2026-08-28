@@ -17,18 +17,20 @@ import {
   settingsCardBorder,
   settingsCardEmoji,
   settingsCardTilt,
+  settingsBackground,
   settingsClose,
   settingsFont,
   settingsPanel,
   settingsSurface,
   settingsTexture,
+  settingsTextureSize,
   settingsToggle,
 } from "./dom.js";
 
 /**
  * Chaves centralizadas utilizadas na persistência local das preferências.
  *
- * @type {{view: string, profile: string, palette: string, font: string, texture: string, tilt: string}}
+ * @type {{view: string, profile: string, palette: string, font: string, texture: string, textureSize: string, tilt: string}}
  * @constant
  */
 export const storageKeys = {
@@ -37,6 +39,8 @@ export const storageKeys = {
   palette: "ti-demandas-palette",
   font: "ti-demandas-font",
   texture: "ti-demandas-card-texture",
+  textureSize: "ti-demandas-card-texture-size",
+  background: "ti-demandas-background",
   border: "ti-demandas-card-border",
   emoji: "ti-demandas-card-emoji",
   tilt: "ti-demandas-card-tilt",
@@ -72,6 +76,10 @@ const valid = {
     "material-ocean",
     "synthwave",
     "cobalt",
+    "hacker",
+    "suporte",
+    "bi",
+    "rpa",
   ],
   font: [
     "dm-sans",
@@ -104,10 +112,66 @@ const valid = {
     "circuit",
     "mesh",
     "starlight",
+    "hacker",
   ],
-  border: ["none", "rgb", "team", "orbit", "pulse", "prism"],
+  border: [
+    "none",
+    "rgb",
+    "team",
+    "orbit",
+    "pulse",
+    "prism",
+    "hacker",
+    "suporte",
+    "bi",
+    "rpa",
+  ],
   emoji: ["default", "android", "ios", "mac", "windows", "linux"],
+  background: ["default", "aurora", "spotlight", "horizon", "grid", "nebula"],
 };
+
+/**
+ * URLs das fontes opcionais. Elas são carregadas somente quando selecionadas,
+ * evitando baixar 13 famílias que não participam da renderização inicial.
+ *
+ * @private
+ * @type {Record<string, string>}
+ */
+const fontStylesheets = {
+  inter: "Inter:wght@400;500;600;700",
+  manrope: "Manrope:wght@400;500;600;700",
+  "space-grotesk": "Space+Grotesk:wght@500;600;700",
+  outfit: "Outfit:wght@400;500;600;700",
+  "plus-jakarta": "Plus+Jakarta+Sans:wght@400;500;600;700",
+  "ibm-plex": "IBM+Plex+Sans:wght@400;500;600;700",
+  "fira-sans": "Fira+Sans:wght@400;500;600;700",
+  "source-sans": "Source+Sans+3:wght@400;500;600;700",
+  sora: "Sora:wght@400;500;600;700",
+  rubik: "Rubik:wght@400;500;600;700",
+  "work-sans": "Work+Sans:wght@400;500;600;700",
+  "nunito-sans": "Nunito+Sans:wght@400;500;600;700",
+  "jetbrains-mono": "JetBrains+Mono:wght@400;500;600;700",
+};
+
+/**
+ * Injeta a folha da fonte escolhida uma única vez.
+ *
+ * @private
+ * @param {string} font Identificador validado da fonte.
+ * @returns {void}
+ */
+function loadFontStylesheet(font) {
+  const family = fontStylesheets[font];
+  if (!family || document.head.querySelector(`[data-portal-font="${font}"]`)) {
+    return;
+  }
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `https://fonts.googleapis.com/css2?family=${family}&display=swap`;
+  link.dataset.portalFont = font;
+  document.head.append(link);
+}
 
 /**
  * Remove a classe transitória usada durante a troca de tema.
@@ -200,16 +264,15 @@ export function setPalette(palette, animateChange = false) {
 /**
  * Aplica a família tipográfica selecionada e sincroniza o campo de configurações.
  *
- * Fontes inválidas são substituídas por `dm-sans`. A animação opcional realiza
- * uma transição de opacidade nos principais elementos textuais antes e depois da
- * troca do atributo `data-font`.
+ * Fontes inválidas são substituídas por `dm-sans`. A troca é imediata para que
+ * o navegador recalcule o layout diretamente com a nova métrica tipográfica.
  *
  * @param {string} font Identificador da fonte desejada.
- * @param {boolean} [animateChange=false] Define se a alteração será animada.
  * @returns {void}
  */
-export function setFont(font, animateChange = false) {
+export function setFont(font) {
   const selected = valid.font.includes(font) ? font : "dm-sans";
+  loadFontStylesheet(selected);
 
   /**
    * Confirma a fonte selecionada no documento e no controle de configurações.
@@ -222,50 +285,7 @@ export function setFont(font, animateChange = false) {
     if (settingsFont) settingsFont.value = selected;
   }
 
-  if (!animateChange || motion.matches) {
-    commitFont();
-    return;
-  }
-
-  const targets = document.querySelectorAll(
-    [
-      "h1",
-      "h2",
-      "h3",
-      "p",
-      "label",
-      "option",
-      ".portal-heading__title",
-      ".template-number",
-      ".template-count",
-      ".team-action",
-      ".popular-demands__label",
-      ".popular-demand",
-      ".settings-tab",
-      ".palette-option",
-      ".settings-save",
-    ].join(","),
-  );
-
-  /**
-   * Cria a animação de transição tipográfica para um elemento textual.
-   *
-   * @private
-   * @param {Element} element Elemento textual que receberá o fade.
-   * @returns {Animation} Instância criada pela Web Animations API.
-   */
-  function createFontTransition(element) {
-    return element.animate(
-      [{ opacity: 1 }, { opacity: 0, offset: 0.5 }, { opacity: 1 }],
-      { duration: 360, easing: "ease-in-out", fill: "both" },
-    );
-  }
-
-  const animations = [...targets].map(createFontTransition);
-  setTimeout(commitFont, 180);
-  Promise.all(animations.map(getFinishedAnimationPromise)).catch(
-    ignoreVisualAnimationCancellation,
-  );
+  commitFont();
 }
 
 /**
@@ -281,6 +301,29 @@ export function setCardTexture(texture) {
   const selected = valid.texture.includes(texture) ? texture : "none";
   document.documentElement.dataset.cardTexture = selected;
   if (settingsTexture) settingsTexture.value = selected;
+}
+
+export function setCardTextureSize(size) {
+  const selected = ["small", "default", "large"].includes(size)
+    ? size
+    : "default";
+  document.documentElement.dataset.cardTextureSize = selected;
+  document.documentElement.style.removeProperty("--card-texture-size");
+  if (settingsTextureSize) settingsTextureSize.value = selected;
+}
+
+/**
+ * Aplica o background escolhido e sincroniza o controle correspondente.
+ *
+ * @param {string} background Identificador do background.
+ * @returns {void}
+ */
+export function setBackground(background) {
+  const selected = valid.background.includes(background)
+    ? background
+    : "default";
+  document.documentElement.dataset.background = selected;
+  if (settingsBackground) settingsBackground.value = selected;
 }
 
 export function setCardBorder(border) {
@@ -299,9 +342,9 @@ function startCardBorderAnimations(border) {
     const teamColor = getComputedStyle(card)
       .getPropertyValue("--team-color")
       .trim();
-    const shadow = getComputedStyle(card)
-      .getPropertyValue("--shadow-card")
-      .trim();
+    // A borda pulsante usa somente camadas internas; a sombra externa criava
+    // manchas escuras e retangulares no espaço entre cards.
+    const shadow = "none";
     let keyframes;
     let options;
 
@@ -317,6 +360,12 @@ function startCardBorderAnimations(border) {
         { backgroundPosition: "center, center, 200% 0" },
       ];
       options = { duration: 3400, easing: "linear", iterations: Infinity };
+    } else if (["hacker", "suporte", "bi", "rpa"].includes(border)) {
+      keyframes = [
+        { "--card-border-angle": "0deg" },
+        { "--card-border-angle": "360deg" },
+      ];
+      options = { duration: 2600, easing: "linear", iterations: Infinity };
     } else if (border === "pulse") {
       const softGlow = `color-mix(in srgb, ${teamColor} 22%, transparent)`;
       const strongGlow = `color-mix(in srgb, ${teamColor} 52%, transparent)`;
@@ -444,6 +493,24 @@ export function setCardTilt(enabled) {
  * @returns {void}
  */
 export function setupCardTilt() {
+  const stableBounds = new WeakMap();
+
+  /**
+   * Lê a geometria original do elemento, sem deixar o tilt atual influenciar
+   * o próximo cálculo. O transform visual é restaurado imediatamente depois.
+   *
+   * @param {HTMLElement} card Card cujo hitbox será medido.
+   * @returns {DOMRect} Geometria estável do card.
+   */
+  function getStableCardBounds(card) {
+    const currentTransform = card.style.transform;
+    card.style.transform = "none";
+    const bounds = card.getBoundingClientRect();
+    if (currentTransform) card.style.transform = currentTransform;
+    else card.style.removeProperty("transform");
+    return bounds;
+  }
+
   /**
    * Atualiza a transformação 3D do cartão sob o ponteiro.
    *
@@ -455,7 +522,8 @@ export function setupCardTilt() {
     const card = event.target.closest(".team-card, .template-card");
     if (!card || card.classList.contains("is-open") || !root.contains(card))
       return;
-    const bounds = card.getBoundingClientRect();
+    const bounds = stableBounds.get(card) || getStableCardBounds(card);
+    stableBounds.set(card, bounds);
     const rotateY = ((event.clientX - bounds.left) / bounds.width - 0.5) * 5;
     const rotateX = ((event.clientY - bounds.top) / bounds.height - 0.5) * -5;
     card.style.transform = `perspective(1200px) scale(.985) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
@@ -471,8 +539,10 @@ export function setupCardTilt() {
    */
   function handleCardPointerOut(event) {
     const card = event.target.closest(".team-card, .template-card");
-    if (card && !card.contains(event.relatedTarget))
+    if (card && !card.contains(event.relatedTarget)) {
       card.style.removeProperty("transform");
+      stableBounds.delete(card);
+    }
   }
 
   root.addEventListener("pointermove", handleCardPointerMove);
@@ -586,7 +656,7 @@ export function setupSettings(portal, defaultHeading) {
    */
   function handleFontChange() {
     localStorage.setItem(storageKeys.font, settingsFont.value);
-    setFont(settingsFont.value, true);
+    setFont(settingsFont.value);
   }
 
   /**
@@ -597,6 +667,16 @@ export function setupSettings(portal, defaultHeading) {
   function handleTextureChange() {
     localStorage.setItem(storageKeys.texture, settingsTexture.value);
     setCardTexture(settingsTexture.value);
+  }
+
+  function handleTextureSizeChange() {
+    localStorage.setItem(storageKeys.textureSize, settingsTextureSize.value);
+    setCardTextureSize(settingsTextureSize.value);
+  }
+
+  function handleBackgroundChange() {
+    localStorage.setItem(storageKeys.background, settingsBackground.value);
+    setBackground(settingsBackground.value);
   }
 
   function handleCardBorderChange() {
@@ -817,8 +897,71 @@ export function setupSettings(portal, defaultHeading) {
     tab.addEventListener("click", handleSettingsTabClick);
   }
 
+  /**
+   * Alterna as subabas da seção Aparência sem interferir nas abas principais.
+   *
+   * @param {MouseEvent} event Evento de clique na subaba.
+   * @returns {void}
+   */
+  function handleAppearanceTabClick(event) {
+    const tab = event.currentTarget;
+    const appearance = tab.closest("#settings-appearance");
+    const next = appearance?.querySelector(
+      `#settings-appearance-${tab.dataset.appearanceTab}`,
+    );
+    const current = appearance?.querySelector(
+      ".settings-subsection:not([hidden])",
+    );
+
+    if (!appearance || !next || next === current) return;
+
+    appearance.querySelectorAll("[data-appearance-tab]").forEach((item) => {
+      const active = item === tab;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-selected", String(active));
+    });
+    settingsTabAnimation?.cancel();
+
+    function revealNextAppearancePanel() {
+      next.hidden = false;
+      if (motion.matches) return;
+      settingsTabAnimation = next.animate(
+        [
+          { opacity: 0, transform: "translateX(10px)" },
+          { opacity: 1, transform: "translateX(0)" },
+        ],
+        { duration: 220, easing: "cubic-bezier(.16, 1, .3, 1)" },
+      );
+    }
+
+    if (!current || motion.matches) {
+      if (current) current.hidden = true;
+      revealNextAppearancePanel();
+      return;
+    }
+
+    const exit = current.animate(
+      [
+        { opacity: 1, transform: "translateX(0)" },
+        { opacity: 0, transform: "translateX(-8px)" },
+      ],
+      { duration: 130, easing: "ease-in" },
+    );
+    settingsTabAnimation = exit;
+    exit.finished.then(
+      () => {
+        if (settingsTabAnimation !== exit) return;
+        current.hidden = true;
+        revealNextAppearancePanel();
+      },
+      () => {},
+    );
+  }
+
   settingsFont?.addEventListener("change", handleFontChange);
   settingsTexture?.addEventListener("change", handleTextureChange);
+  settingsTextureSize?.addEventListener("change", handleTextureSizeChange);
+  settingsBackground?.addEventListener("change", handleBackgroundChange);
   settingsCardBorder?.addEventListener("change", handleCardBorderChange);
   settingsCardEmoji?.addEventListener("change", handleCardEmojiChange);
   settingsCardTilt?.addEventListener("change", handleCardTiltChange);
@@ -826,6 +969,9 @@ export function setupSettings(portal, defaultHeading) {
   settingsToggle?.addEventListener("click", handleSettingsToggle);
   settingsClose?.addEventListener("click", closeSettings);
   document.querySelectorAll("[data-settings-tab]").forEach(registerSettingsTab);
+  document
+    .querySelectorAll("[data-appearance-tab]")
+    .forEach((tab) => tab.addEventListener("click", handleAppearanceTabClick));
   settingsPanel?.addEventListener("click", handleSettingsBackdropClick);
   settingsPanel?.addEventListener("submit", handleProfileSubmit);
   document.addEventListener("click", handleDocumentClick);

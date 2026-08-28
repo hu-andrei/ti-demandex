@@ -22,7 +22,6 @@ A aplicação utiliza Web Animations API para:
 - atualização do cabeçalho;
 - efeitos decorativos;
 - troca de tema;
-- troca de fonte;
 - bordas animadas;
 - microinterações.
 
@@ -41,6 +40,8 @@ O código do portal ajusta estados de acessibilidade conforme cards e painéis s
 - `role="radiogroup"`;
 - `role="radio"`;
 - `role="switch"`.
+
+A busca rápida usa `role="dialog"`, campo de busca com relação a `role="listbox"` e suporte a `Escape`, setas e `Enter`.
 
 Templates ocultos não devem permanecer navegáveis por teclado.
 
@@ -63,6 +64,8 @@ Ao adicionar componentes:
 - navegar pela página apenas com `Tab` e `Shift+Tab`;
 - abrir e fechar cards pelo teclado;
 - abrir configurações pelo teclado;
+- abrir e fechar a busca rápida com `Ctrl+K` e `Escape`;
+- navegar pelos resultados da busca com setas e `Enter`;
 - alternar abas do painel;
 - verificar foco ao fechar modal/painel;
 - ativar `prefers-reduced-motion` no sistema operacional;

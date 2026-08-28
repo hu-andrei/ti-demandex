@@ -1,0 +1,34 @@
+/* Variações de background baseadas nas variáveis do tema ativo. */
+
+html[data-background="aurora"] body {
+  background:
+    radial-gradient(ellipse at 18% 12%, color-mix(in srgb, var(--color-brand) 18%, transparent), transparent 38%),
+    radial-gradient(ellipse at 82% 88%, color-mix(in srgb, var(--color-active) 13%, transparent), transparent 42%),
+    var(--bg);
+}
+
+html[data-background="spotlight"] body {
+  background:
+    radial-gradient(circle at 50% -18%, color-mix(in srgb, var(--color-brand) 24%, transparent), transparent 52%),
+    var(--bg);
+}
+
+html[data-background="horizon"] body {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-brand) 12%, var(--bg)) 0%, var(--bg) 48%, color-mix(in srgb, var(--color-active) 8%, var(--bg)) 100%);
+}
+
+html[data-background="grid"] body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-brand) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-brand) 8%, transparent) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+html[data-background="nebula"] body {
+  background:
+    radial-gradient(ellipse at 8% 82%, color-mix(in srgb, var(--ambient-b) 82%, transparent), transparent 42%),
+    radial-gradient(ellipse at 92% 8%, color-mix(in srgb, var(--ambient-a) 82%, transparent), transparent 44%),
+    var(--bg);
+}

@@ -15,15 +15,22 @@ import {
   profileNickname,
   profileTeam,
   root,
+  settingsPanel,
   viewSwitcher,
 } from "./modules/dom.js";
 import { animate, animateDecorations } from "./modules/animations.js";
 import { createPortal } from "./modules/portal.js";
 import {
+  isCommandPaletteOpen,
+  setupCommandPalette,
+} from "./modules/command.js";
+import {
   setCardBorder,
   setCardEmoji,
   setCardTexture,
+  setCardTextureSize,
   setCardTilt,
+  setBackground,
   setFont,
   setPalette,
   setupCardTilt,
@@ -49,6 +56,25 @@ function loadMenuIllustration() {
     "../assets/images/equipe.png",
     import.meta.url,
   ).href;
+}
+
+function setupHiveTextureInteraction() {
+  root?.addEventListener("pointermove", (event) => {
+    if (event.pointerType && event.pointerType !== "mouse") return;
+    const card = event.target.closest?.(".team-card");
+    if (!card || document.documentElement.dataset.cardTexture !== "hive")
+      return;
+    const bounds = card.getBoundingClientRect();
+    card.style.setProperty("--hive-x", `${event.clientX - bounds.left}px`);
+    card.style.setProperty("--hive-y", `${event.clientY - bounds.top}px`);
+    card.classList.add("is-hive-pointer-active");
+  });
+
+  root?.addEventListener("pointerout", (event) => {
+    const card = event.target.closest?.(".team-card");
+    if (!card || card.contains(event.relatedTarget)) return;
+    card.classList.remove("is-hive-pointer-active");
+  });
 }
 
 /**
@@ -161,6 +187,30 @@ function handlePortalBackClick() {
 }
 
 /**
+ * Mantém uma hierarquia única para o Escape entre overlays e a navegação do
+ * portal. Os módulos de overlay recebem o evento depois deste guard e fecham
+ * seu próprio painel quando ele está aberto.
+ *
+ * @param {KeyboardEvent} event Evento global de teclado.
+ * @returns {void}
+ */
+function handleGlobalEscape(event) {
+  if (event.key !== "Escape") return;
+  if (isCommandPaletteOpen()) return;
+  if (settingsPanel && !settingsPanel.hidden) return;
+
+  const openTeam = portal.getOpenTeam();
+  if (!openTeam) return;
+  event.preventDefault();
+  portal.toggle(openTeam);
+  // O botão que abriu a equipe pode continuar focado após o fechamento e o
+  // navegador então desenha um contorno claro sobre a tela principal.
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+}
+
+/**
  * Restaura paleta, fonte, textura e inclinação salvas localmente.
  *
  * Valores ausentes usam os padrões visuais da aplicação. A inclinação é
@@ -173,6 +223,10 @@ function restoreAppearancePreferences() {
   setPalette(localStorage.getItem(storageKeys.palette) || "default");
   setFont(localStorage.getItem(storageKeys.font) || "dm-sans");
   setCardTexture(localStorage.getItem(storageKeys.texture) || "none");
+  setCardTextureSize(
+    localStorage.getItem(storageKeys.textureSize) || "default",
+  );
+  setBackground(localStorage.getItem(storageKeys.background) || "default");
   setCardBorder(localStorage.getItem(storageKeys.border) || "none");
   setCardEmoji(localStorage.getItem(storageKeys.emoji) || "default");
   setCardTilt(localStorage.getItem(storageKeys.tilt) === "true");
@@ -341,7 +395,12 @@ function initialize() {
   animateDecorations(root);
   restoreAppearancePreferences();
   setupCardTilt();
+  setupHiveTextureInteraction();
+  // Registrado antes dos módulos de overlay para que o Escape respeite a ordem
+  // palette → configurações → equipe aberta.
+  document.addEventListener("keydown", handleGlobalEscape);
   setupSettings(portal, defaultPortalHeading);
+  setupCommandPalette({ onNavigateTeam: (teamId) => portal.toggle(teamId) });
   restoreViewPreference();
   setupViewSwitcher();
   void loadProductVersion();

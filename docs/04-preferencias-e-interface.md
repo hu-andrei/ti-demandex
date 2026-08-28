@@ -10,7 +10,9 @@ As preferências são salvas em `localStorage`. As chaves atuais são:
 | Perfil | `ti-demandas-profile` |
 | Paleta | `ti-demandas-palette` |
 | Fonte | `ti-demandas-font` |
+| Background | `ti-demandas-background` |
 | Textura | `ti-demandas-card-texture` |
+| Tamanho da textura | `ti-demandas-card-texture-size` |
 | Borda | `ti-demandas-card-border` |
 | Emoji | `ti-demandas-card-emoji` |
 | Hover 3D | `ti-demandas-card-tilt` |
@@ -43,9 +45,15 @@ Paletas aceitas pelo código:
 - ayu;
 - material-ocean;
 - synthwave;
-- cobalt.
+- cobalt;
+- hacker;
+- suporte;
+- bi;
+- rpa.
 
 Valores inválidos retornam para `default`.
+
+Na interface, as paletas `suporte`, `bi` e `rpa` são apresentadas como **Sentinela**, **Dataforge** e **Autômata**, respectivamente.
 
 ## 4. Fontes
 
@@ -85,9 +93,25 @@ Valores aceitos:
 - sci-fi;
 - circuit;
 - mesh;
-- starlight.
+- starlight;
+- hacker.
 
-## 6. Bordas
+O tamanho da textura aceita `small`, `default` e `large`.
+
+## 6. Backgrounds
+
+Valores estáticos aceitos:
+
+- default;
+- aurora;
+- spotlight;
+- horizon;
+- grid;
+- nebula.
+
+Valores removidos ou desconhecidos retornam para `default`; backgrounds animados não são suportados.
+
+## 7. Bordas
 
 Efeitos disponíveis:
 
@@ -96,11 +120,17 @@ Efeitos disponíveis:
 - team;
 - orbit;
 - pulse;
-- prism.
+- prism;
+- hacker;
+- suporte;
+- bi;
+- rpa.
 
 As animações de borda são canceladas antes da aplicação de um novo efeito, evitando múltiplas instâncias concorrentes.
 
-## 7. Emojis
+Na interface, as bordas `suporte`, `bi` e `rpa` são identificadas como **Sentinela — varredura azul**, **Dataforge — pulso âmbar** e **Autômata — circuito violeta**.
+
+## 8. Emojis
 
 Variações configuráveis:
 
@@ -111,13 +141,13 @@ Variações configuráveis:
 - windows;
 - linux.
 
-## 8. Hover 3D
+## 9. Hover 3D
 
 A inclinação 3D é opcional e baseada na posição do cursor. O estado é persistido como string booleana no `localStorage`.
 
 O efeito deve permanecer desabilitado ou reduzido quando o usuário prefere menos movimento.
 
-## 9. Visualização
+## 10. Visualização
 
 Os modos suportados são:
 
@@ -129,7 +159,13 @@ menu
 
 Valores persistidos fora desse conjunto devem ser tratados como inválidos e substituídos pelo padrão da aplicação.
 
-## 10. Limpeza de preferências
+## 11. Busca e favoritos
+
+A busca rápida é aberta por `Ctrl+K` ou `⌘K`. Os itens recentes são armazenados em `ti-demandas-command-recent`.
+
+Os favoritos usam `ti-demandas-favorite-templates`. Eles atualizam os badges “Mais utilizadas” somente no card da equipe correspondente; a remoção do último favorito restaura os badges padrão.
+
+## 12. Limpeza de preferências
 
 Para reset operacional completo, remova as chaves `ti-demandas-*` do armazenamento local do navegador.
 

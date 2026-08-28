@@ -110,8 +110,11 @@ Nunca edite `dist/` como fonte principal. As alterações devem ser feitas em `h
 - acesso a Project funciona;
 - fluxo de Qualidade funciona;
 - visualizações grid/list/menu funcionam;
+- busca rápida abre por `Ctrl+K` e retorna resultados;
+- favoritos atualizam os badges da equipe correta e retornam ao padrão quando removidos;
 - configurações abrem e fecham;
 - preferências persistem;
+- backgrounds estáticos e paletas temáticas aplicam corretamente;
 - `prefers-reduced-motion` não causa falha funcional;
 - build conclui sem erro;
 - `dist/index.html` abre corretamente.

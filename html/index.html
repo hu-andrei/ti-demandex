@@ -10,9 +10,7 @@
   <title>Portal de Demandas | TI Hungaro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style id="remove-first-load-flicker">
     /* Evita pintar o markup intermediário enquanto o portal é montado. */
     html.app-loading .portal-shell {
@@ -31,15 +29,18 @@
     <section class="portal" aria-label="Seleção de equipe e template de demanda">
       <div class="portal-heading">
         <div class="brand-mark portal-heading__icon" aria-hidden="true">
-          <img class="portal-heading__logo" src="../assets/images/Logo.png" alt="" decoding="async" fetchpriority="high" />
+          <img class="portal-heading__logo" src="../assets/images/Logo.png" alt="" decoding="async"
+            fetchpriority="high" />
         </div>
         <div>
           <span class="portal-heading__title">DEMANDex</span>
           <p class="portal-heading__description">Selecione uma equipe para visualizar os formulários disponíveis.</p>
         </div>
         <div class="team-context-tabs" role="tablist" aria-label="Contexto da equipe" hidden>
-          <button class="team-context-tab is-active" type="button" role="tab" aria-selected="true" data-team-context="team">Equipe</button>
-          <button class="team-context-tab" type="button" role="tab" aria-selected="false" data-team-context="quality">Qualidade</button>
+          <button class="team-context-tab is-active" type="button" role="tab" aria-selected="true"
+            data-team-context="team">Equipe</button>
+          <button class="team-context-tab" type="button" role="tab" aria-selected="false"
+            data-team-context="quality">Qualidade</button>
         </div>
         <div class="portal-heading__team-actions" hidden>
           <a class="portal-heading__project" href="#" target="_blank" rel="noreferrer"
@@ -54,6 +55,14 @@
               <path d="m7 7 10 10M17 7 7 17" />
             </svg></button>
         </div>
+        <button class="command-toggle" id="command-toggle" type="button" aria-label="Abrir busca rápida"
+          aria-controls="command-palette" title="Busca rápida (Ctrl+K)">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3-3" />
+          </svg>
+          <span>Buscar</span><kbd>Ctrl K</kbd>
+        </button>
         <div class="view-switcher" role="group" aria-label="Formato de apresentação">
           <button class="view-switcher__button is-active" type="button" data-view="grid" aria-label="Exibir em grade"
             aria-pressed="true" title="Exibir em grade">
@@ -132,97 +141,147 @@
               <div class="settings-section" id="settings-appearance" role="tabpanel"
                 aria-labelledby="settings-tab-appearance" hidden>
                 <p>Aparência</p>
-                <div class="settings-palette" aria-labelledby="settings-palette-title">
-                  <span id="settings-palette-title">Tema</span>
-                  <div class="settings-palette__options" role="radiogroup" aria-label="Tema visual">
-                    <button type="button" role="radio" aria-checked="true" class="palette-option is-active"
-                      data-palette="default"><i></i>Padrão</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="dracula"><i></i>Dracula</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="catppuccin"><i></i>Catppuccin</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="everforest"><i></i>Everforest</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="nord"><i></i>Nord</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="tokyo-night"><i></i>Tokyo Night</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="gruvbox"><i></i>Gruvbox</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="solarized"><i></i>Solarized</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="one-dark"><i></i>One Dark</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="rose-pine"><i></i>Rosé Pine</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="monokai"><i></i>Monokai</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="kanagawa"><i></i>Kanagawa</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="ayu"><i></i>Ayu Mirage</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="material-ocean"><i></i>Material Ocean</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="synthwave"><i></i>Synthwave</button>
-                    <button type="button" role="radio" aria-checked="false" class="palette-option"
-                      data-palette="cobalt"><i></i>Cobalt</button>
-                  </div>
+                <div class="settings-subtabs" role="tablist" aria-label="Seções de aparência">
+                  <button class="settings-subtab is-active" type="button" role="tab" aria-selected="true"
+                    aria-controls="settings-appearance-theme" id="settings-subtab-theme"
+                    data-appearance-tab="theme">Tema e fonte</button>
+                  <button class="settings-subtab" type="button" role="tab" aria-selected="false"
+                    aria-controls="settings-appearance-cards" id="settings-subtab-cards"
+                    data-appearance-tab="cards">Cards</button>
+                  <button class="settings-subtab" type="button" role="tab" aria-selected="false"
+                    aria-controls="settings-appearance-background" id="settings-subtab-background"
+                    data-appearance-tab="background">Background</button>
                 </div>
-                <label class="settings-font"><span>Fonte da interface</span><select id="settings-font" name="font">
-                    <option value="dm-sans">DM Sans</option>
-                    <option value="inter">Inter</option>
-                    <option value="manrope">Manrope</option>
-                    <option value="space-grotesk">Space Grotesk</option>
-                    <option value="outfit">Outfit</option>
-                    <option value="plus-jakarta">Plus Jakarta Sans</option>
-                    <option value="ibm-plex">IBM Plex Sans</option>
-                    <option value="fira-sans">Fira Sans</option>
-                    <option value="source-sans">Source Sans 3</option>
-                    <option value="sora">Sora</option>
-                    <option value="rubik">Rubik</option>
-                    <option value="work-sans">Work Sans</option>
-                    <option value="nunito-sans">Nunito Sans</option>
-                    <option value="jetbrains-mono">JetBrains Mono</option>
-                  </select></label>
-                <label class="settings-texture"><span>Borda dos cards</span><select id="settings-card-border"
-                    name="card-border">
-                    <option value="none">Padrão</option>
-                    <option value="rgb">RGB animado</option>
-                    <option value="team">Cor da equipe animada</option>
-                    <option value="orbit">Traço orbital animado</option>
-                    <option value="pulse">Pulso neon</option>
-                    <option value="prism">Prisma giratório</option>
-                  </select></label>
-                <label class="settings-texture"><span>Emoji dos cards</span><select id="settings-card-emoji"
-                    name="card-emoji">
-                    <option value="default">Original da equipe</option>
-                    <option value="android">Android</option>
-                    <option value="ios">iOS</option>
-                    <option value="mac">Mac</option>
-                    <option value="windows">Windows</option>
-                    <option value="linux">Linux</option>
-                  </select></label>
-                <label class="settings-texture"><span>Textura dos cards</span><select id="settings-texture"
-                    name="texture">
-                    <option value="none">Sem textura</option>
-                    <option value="mist">Névoa suave</option>
-                    <option value="grain">Grão refinado</option>
-                    <option value="aurora">Aurora sutil</option>
-                    <option value="paper">Papel acetinado</option>
-                    <option value="lines">Linhas delicadas</option>
-                    <option value="glow">Brilho difuso</option>
-                    <option value="waves">Ondas suaves</option>
-                    <option value="topography">Topografia</option>
-                    <option value="hive">Hive</option>
-                    <option value="sci-fi">Sci-fi</option>
-                    <option value="circuit">Circuito</option>
-                    <option value="mesh">Malha</option>
-                    <option value="starlight">Luz estelar</option>
-                  </select></label>
-                <label class="settings-switch"><span><strong>Hover 3D nos cards</strong><small>Inclina os cards conforme
-                      a posição do cursor.</small></span><input id="settings-card-tilt" name="card-tilt" type="checkbox"
-                    role="switch"></label>
+                <div class="settings-subsection" id="settings-appearance-theme" role="tabpanel"
+                  aria-labelledby="settings-subtab-theme">
+                  <div class="settings-palette" aria-labelledby="settings-palette-title">
+                    <span id="settings-palette-title">Tema</span>
+                    <div class="settings-palette__options" role="radiogroup" aria-label="Tema visual">
+                      <button type="button" role="radio" aria-checked="true" class="palette-option is-active"
+                        data-palette="default"><i></i>Padrão</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="dracula"><i></i>Dracula</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="catppuccin"><i></i>Catppuccin</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="everforest"><i></i>Everforest</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="nord"><i></i>Nord</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="tokyo-night"><i></i>Tokyo Night</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="gruvbox"><i></i>Gruvbox</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="solarized"><i></i>Solarized</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="one-dark"><i></i>One Dark</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="rose-pine"><i></i>Rosé Pine</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="monokai"><i></i>Monokai</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="kanagawa"><i></i>Kanagawa</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="ayu"><i></i>Ayu Mirage</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="material-ocean"><i></i>Material Ocean</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="synthwave"><i></i>Synthwave</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="cobalt"><i></i>Cobalt</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="hacker"><i></i>Hacker</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="suporte"><i></i>Sentinela</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="bi"><i></i>Dataforge</button>
+                      <button type="button" role="radio" aria-checked="false" class="palette-option"
+                        data-palette="rpa"><i></i>Autômata</button>
+                    </div>
+                  </div>
+                  <label class="settings-font"><span>Fonte da interface</span><select id="settings-font" name="font">
+                      <option value="dm-sans">DM Sans</option>
+                      <option value="inter">Inter</option>
+                      <option value="manrope">Manrope</option>
+                      <option value="space-grotesk">Space Grotesk</option>
+                      <option value="outfit">Outfit</option>
+                      <option value="plus-jakarta">Plus Jakarta Sans</option>
+                      <option value="ibm-plex">IBM Plex Sans</option>
+                      <option value="fira-sans">Fira Sans</option>
+                      <option value="source-sans">Source Sans 3</option>
+                      <option value="sora">Sora</option>
+                      <option value="rubik">Rubik</option>
+                      <option value="work-sans">Work Sans</option>
+                      <option value="nunito-sans">Nunito Sans</option>
+                      <option value="jetbrains-mono">JetBrains Mono</option>
+                    </select></label>
+                </div>
+                <div class="settings-subsection" id="settings-appearance-cards" role="tabpanel"
+                  aria-labelledby="settings-subtab-cards" hidden>
+                  <label class="settings-texture"><span>Borda dos cards</span><select id="settings-card-border"
+                      name="card-border">
+                      <option value="none">Padrão</option>
+                      <option value="rgb">RGB animado</option>
+                      <option value="team">Cor da equipe animada</option>
+                      <option value="orbit">Traço orbital animado</option>
+                      <option value="pulse">Pulso neon</option>
+                      <option value="prism">Prisma giratório</option>
+                      <option value="hacker">Hacker — varredura verde</option>
+                      <option value="suporte">Sentinela — varredura azul</option>
+                      <option value="bi">Dataforge — pulso âmbar</option>
+                      <option value="rpa">Autômata — circuito violeta</option>
+                    </select></label>
+                  <label class="settings-texture"><span>Emoji dos cards</span><select id="settings-card-emoji"
+                      name="card-emoji">
+                      <option value="default">Original da equipe</option>
+                      <option value="android">Android</option>
+                      <option value="ios">iOS</option>
+                      <option value="mac">Mac</option>
+                      <option value="windows">Windows</option>
+                      <option value="linux">Linux</option>
+                    </select></label>
+                  <label class="settings-texture"><span>Textura dos cards</span><select id="settings-texture"
+                      name="texture">
+                      <option value="none">Sem textura</option>
+                      <option value="mist">Névoa suave</option>
+                      <option value="grain">Grão refinado</option>
+                      <option value="aurora">Aurora sutil</option>
+                      <option value="paper">Papel acetinado</option>
+                      <option value="lines">Linhas delicadas</option>
+                      <option value="glow">Brilho difuso</option>
+                      <option value="waves">Ondas suaves</option>
+                      <option value="topography">Topografia</option>
+                      <option value="hive">Hive</option>
+                      <option value="sci-fi">Sci-fi</option>
+                      <option value="circuit">Circuito</option>
+                      <option value="mesh">Malha</option>
+                      <option value="starlight">Luz estelar</option>
+                      <option value="hacker">Hacker</option>
+                    </select></label>
+                  <label class="settings-texture"><span>Tamanho da textura</span><select id="settings-texture-size"
+                      name="texture-size">
+                      <option value="small">Pequena</option>
+                      <option value="default">Padrão</option>
+                      <option value="large">Grande</option>
+                    </select></label>
+                  <label class="settings-switch"><span><strong>Hover 3D nos cards</strong><small>Inclina os cards
+                        conforme
+                        a posição do cursor.</small></span><input id="settings-card-tilt" name="card-tilt"
+                      type="checkbox" role="switch"></label>
+                </div>
+                <div class="settings-subsection" id="settings-appearance-background" role="tabpanel"
+                  aria-labelledby="settings-subtab-background" hidden>
+                  <label class="settings-texture"><span>Background do portal</span><select id="settings-background"
+                      name="background">
+                      <option value="default">Atual (padrão)</option>
+                      <option value="aurora">Aurora</option>
+                      <option value="spotlight">Spotlight</option>
+                      <option value="horizon">Horizonte</option>
+                      <option value="grid">Grade sutil</option>
+                      <option value="nebula">Nebulosa</option>
+                    </select></label>
+                  <p class="settings-subsection__hint">As opções acompanham as cores do tema selecionado.</p>
+                </div>
               </div>
               <div class="settings-section settings-info" id="settings-info" role="tabpanel"
                 aria-labelledby="settings-tab-info" hidden>
@@ -256,6 +315,29 @@
       <div id="teams" class="bento-grid" aria-live="polite"></div>
     </section>
   </main>
+
+  <div id="command-backdrop" class="command-backdrop" hidden></div>
+  <section id="command-palette" class="command-palette" role="dialog" aria-modal="true" aria-labelledby="command-title"
+    hidden>
+    <div class="command-palette__header">
+      <div class="command-palette__search">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3-3" />
+        </svg>
+        <input id="command-input" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar no portal"
+          aria-controls="command-results" placeholder="Buscar equipes, templates ou ações…" />
+        <kbd>ESC</kbd>
+      </div>
+      <div class="command-palette__title" id="command-title">Busca rápida no DEMANDex</div>
+    </div>
+    <div id="command-results" class="command-results" role="listbox" aria-label="Resultados da busca"></div>
+    <footer class="command-palette__footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+      <span><kbd>Enter</kbd> selecionar</span>
+      <span><kbd>Esc</kbd> fechar</span>
+    </footer>
+  </section>
 
   <script type="module" src="../js/script.js"></script>
 </body>

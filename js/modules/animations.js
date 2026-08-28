@@ -20,7 +20,40 @@ import {
 let activeAnimations = [];
 let ambientAnimations = [];
 let headerAnimations = [];
+let portalIconAnimations = [];
 const defaultHeadingIconMarkup = portalHeadingIcon?.innerHTML || "TI";
+
+const portalIconFrames = {
+  suporte: [
+    { transform: "scale(1)" },
+    { offset: 0.78, transform: "scale(.97)" },
+    { offset: 0.88, transform: "scale(1.02)" },
+    { transform: "scale(1)" },
+  ],
+  bi: [
+    { strokeDashoffset: 30, opacity: 0.35 },
+    { offset: 0.48, strokeDashoffset: 0, opacity: 1 },
+    { offset: 0.78, strokeDashoffset: 0, opacity: 1 },
+    { strokeDashoffset: -30, opacity: 0.35 },
+  ],
+  devBrackets: [
+    { transform: "scaleX(.84) translateX(0)", opacity: 0.68 },
+    { offset: 0.36, transform: "scaleX(1.08) translateX(-.15px)", opacity: 1 },
+    { offset: 0.62, transform: "scaleX(.96) translateX(.15px)", opacity: 0.88 },
+    { transform: "scaleX(.84) translateX(0)", opacity: 0.68 },
+  ],
+  dev: [
+    { transform: "rotate(0deg) scale(.92)", opacity: 0.72 },
+    { offset: 0.5, transform: "rotate(7deg) scale(1.08)", opacity: 1 },
+    { transform: "rotate(0deg) scale(.92)", opacity: 0.72 },
+  ],
+  rpa: [
+    { opacity: 1 },
+    { offset: 0.47, opacity: 0.18 },
+    { offset: 0.49, opacity: 1 },
+    { transform: "none", opacity: 1 },
+  ],
+};
 
 /**
  * Cancela uma instância da Web Animations API.
@@ -213,10 +246,12 @@ export function updatePortalHeading(
         "--team-color",
         team?.color || "#cbd8fa",
       );
+      portalHeadingIcon.dataset.team = team?.id || "";
       portalHeadingIcon
         .querySelector("svg")
         ?.setAttribute("preserveAspectRatio", "xMidYMid meet");
     }
+    animatePortalHeadingIcon(team?.id);
   }
 
   if (!animateChange || motion.matches) {
@@ -284,6 +319,81 @@ function animateLoop(element, keyframes, options) {
 }
 
 /**
+ * Reaplica a animação contínua ao SVG atualmente renderizado no cabeçalho.
+ *
+ * O conteúdo do ícone é substituído quando uma equipe é selecionada. Por isso,
+ * a animação criada durante a montagem inicial não pode ser reutilizada: ela
+ * continua vinculada ao SVG antigo. Este helper cancela essa referência e
+ * anima o novo SVG sem afetar as animações dos cartões.
+ *
+ * @private
+ * @returns {void}
+ */
+function animatePortalHeadingIcon(teamId = portalHeadingIcon?.dataset.team) {
+  portalIconAnimations.forEach((animation) => animation.cancel());
+  portalIconAnimations = [];
+
+  const portalIcon = document.querySelector(".portal-heading__icon svg");
+  if (!portalIcon || motion.matches) return;
+
+  portalIconAnimations.push(
+    portalIcon.animate(
+      [
+        { transform: "translateY(0)" },
+        { transform: "translateY(-1px) rotate(-3deg) scale(1.06)" },
+        { transform: "translateY(0)" },
+      ],
+      {
+        fill: "both",
+        iterations: Infinity,
+        duration: 3000,
+        easing: "ease-in-out",
+      },
+    ),
+  );
+
+  const teamPart =
+    teamId === "suporte"
+      ? ["path:first-child", portalIconFrames.suporte, 3200]
+      : teamId === "bi"
+        ? ["path:last-child", portalIconFrames.bi, 2700]
+        : teamId === "dev"
+          ? ["path:last-child", portalIconFrames.dev, 2600]
+          : teamId === "rpa"
+            ? ["path:nth-child(2)", portalIconFrames.rpa, 3000]
+            : null;
+
+  if (!teamPart) return;
+
+  const [selector, frames, duration] = teamPart;
+  const element = portalIcon.querySelector(selector);
+  if (!element) return;
+  if (teamId === "bi") element.style.strokeDasharray = 30;
+  portalIconAnimations.push(
+    element.animate(frames, {
+      fill: "both",
+      iterations: Infinity,
+      duration,
+      easing: "ease-in-out",
+    }),
+  );
+
+  if (teamId === "dev") {
+    const brackets = portalIcon.querySelector("path:first-child");
+    if (brackets) {
+      portalIconAnimations.push(
+        brackets.animate(portalIconFrames.devBrackets, {
+          fill: "both",
+          iterations: Infinity,
+          duration: 2600,
+          easing: "ease-in-out",
+        }),
+      );
+    }
+  }
+}
+
+/**
  * Inicializa as animações decorativas contínuas dos cartões e do cabeçalho.
  *
  * Procura, dentro de `root`, elementos visuais específicos de cada equipe e
@@ -316,19 +426,24 @@ export function animateDecorations(root) {
     ],
     [
       ".team-icon--dev svg path:first-child",
+      portalIconFrames.devBrackets,
+      2600,
+    ],
+    [
+      ".team-icon--dev svg",
       [
-        { transform: "scaleX(.88)", opacity: 0.75 },
-        { transform: "scaleX(1.08)", opacity: 1 },
-        { transform: "scaleX(.88)", opacity: 0.75 },
+        { transform: "translateY(0) rotate(0deg)" },
+        { transform: "translateY(-1px) rotate(-2deg)" },
+        { transform: "translateY(0) rotate(0deg)" },
       ],
       2600,
     ],
     [
       ".team-icon--rpa svg",
       [
-        { transform: "rotate(0deg) scale(1)" },
-        { transform: "rotate(-1.5deg) scale(1.035)" },
-        { transform: "rotate(0deg) scale(1)" },
+        { transform: "translateY(0)" },
+        { transform: "translateY(-1px) rotate(-3deg) scale(1.06)" },
+        { transform: "translateY(0)" },
       ],
       3000,
     ],
@@ -426,19 +541,9 @@ export function animateDecorations(root) {
     .forEach((element) =>
       animateLoop(element, iconFrames.rpaFace, {
         duration: 3000,
-        easing: "steps(1, end)",
+        easing: "ease-in-out",
       }),
     );
 
-  const portalIcon = document.querySelector(".portal-heading__icon svg");
-  if (portalIcon)
-    animateLoop(
-      portalIcon,
-      [
-        { transform: "translateY(0)" },
-        { transform: "translateY(-1px) rotate(-3deg) scale(1.06)" },
-        { transform: "translateY(0)" },
-      ],
-      { duration: 3000, easing: "ease-in-out" },
-    );
+  animatePortalHeadingIcon();
 }

@@ -69,6 +69,17 @@ export const settingsFont = document.querySelector("#settings-font");
  * @type {HTMLInputElement|HTMLSelectElement|null}
  */
 export const settingsTexture = document.querySelector("#settings-texture");
+export const settingsTextureSize = document.querySelector(
+  "#settings-texture-size",
+);
+export const settingsBackground = document.querySelector(
+  "#settings-background",
+);
+export const commandToggle = document.querySelector("#command-toggle");
+export const commandBackdrop = document.querySelector("#command-backdrop");
+export const commandPalette = document.querySelector("#command-palette");
+export const commandInput = document.querySelector("#command-input");
+export const commandResults = document.querySelector("#command-results");
 export const settingsCardBorder = document.querySelector(
   "#settings-card-border",
 );
